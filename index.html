@@ -2,181 +2,318 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SUPENSIÓN IA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SUPENSIÓN IA - Plataforma de Prompts</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; display: flex; height: 100vh; }
-    #sidebar { width: 250px; background-color: #1a1a1a; color: white; padding: 20px; overflow-y: auto; }
-    #main { flex-grow: 1; padding: 20px; overflow-y: auto; }
-    button { width: 100%; padding: 10px; margin-bottom: 10px; background-color: #333; color: white; border: none; cursor: pointer; border-radius: 5px; text-align: left; }
-    button:hover { background-color: #555; }
-    .tag { display: inline-block; background-color: #ddd; padding: 2px 5px; margin: 2px; border-radius: 3px; font-size: 12px; }
-    .prompt-preview { background-color: #f9f9f9; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 15px; }
-    .hidden { display: none; }
-    .editable { background-color: #ffffcc; border-bottom: 1px dashed #ccc; cursor: text; }
-    .search-input { width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ccc; }
-    #login-container { margin: auto; text-align: center; padding: 20px; }
-    #login-container input { padding: 10px; margin-bottom: 10px; width: 200px; }
-    #login-container button { padding: 10px 20px; }
+    /* Reset y fuente */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; height: 100vh; display: flex; }
+
+    /* LOGIN */
+    #login-container {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      display: flex; justify-content: center; align-items: center;
+      background: linear-gradient(135deg, #002f4b, #dc4225);
+      z-index: 10;
+    }
+    #login-box {
+      background: white; padding: 2rem; border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: center;
+      max-width: 360px; width: 100%;
+    }
+    #login-box img { max-width: 120px; margin-bottom: 1rem; }
+    #login-box h2 { color: #002f4b; margin-bottom: 1rem; }
+    #login-box input {
+      width: 100%; padding: 0.75rem; margin-bottom: 1rem;
+      border: 1px solid #ccc; border-radius: 8px;
+      font-size: 1rem;
+    }
+    #login-box button {
+      width: 100%; padding: 0.75rem; font-size: 1rem;
+      background: #002f4b; color: white; border: none;
+      border-radius: 8px; cursor: pointer;
+    }
+    #login-box button:hover { background: #001f38; }
+    #error-msg { color: red; min-height: 1em; margin-top: 1rem; }
+
+    /* PLATAFORMA */
+    #main-container { display: none; flex: 1; }
+    #sidebar {
+      width: 25%; padding: 20px; border-right: 1px solid #ccc;
+      background: #f8f9fa; overflow-y: auto;
+      display: flex; flex-direction: column;
+    }
+    #sidebar img#logo { width: 220px; margin-bottom: 20px; }
+    #sidebar h1 { font-size: 1.5rem; margin-bottom: 1rem; }
+    /* Botones fijos del sidebar mantienen estilo original */
+    #sidebar button {
+      display: block; width: 100%; padding: 10px;
+      margin-bottom: 10px; border: none; cursor: pointer;
+      background: #007bff; color: white; border-radius: 5px;
+      font-size: 1rem; transition: background 0.3s;
+    }
+    #sidebar button:hover { background: #0056b3; }
+
+    /* UI de prompts */
+    .prompt-button {
+      display: inline-block; margin: 5px; padding: 8px 12px;
+      border: 1px solid #007bff; border-radius: 5px;
+      cursor: pointer; background: #f8f9fa; color: #007bff;
+      font-size: 1rem; transition: background 0.3s;
+    }
+    .prompt-button:hover { background: #e9ecef; }
+    .prompt-preview {
+      margin-bottom: 15px; padding: 10px;
+      border: 1px solid #ccc; border-radius: 6px;
+      background: #f4f4f4; cursor: pointer;
+    }
+    .prompt-preview:hover { background: #e9ecef; }
+    .back-button {
+      background: #6c757d; color: white; padding: 8px 12px;
+      border: none; border-radius: 5px; cursor: pointer;
+      margin-bottom: 15px;
+    }
+    .back-button:hover { background: #5a6268; }
+    .input-container { margin-bottom: 15px; }
+    .section-title {
+      background-color: #007bff; color: white;
+      padding: 12px 24px; border-radius: 10px;
+      text-align: center; margin-bottom: 20px;
+      font-size: 24px;
+    }
   </style>
 </head>
 <body>
-  <div id="login-container" class="hidden">
-    <h2>Acceso a SUPENSIÓN IA</h2>
-    <input type="text" id="reference" placeholder="Ingrese su referencia" />
-    <br />
-    <button onclick="validateAccess()">Acceder</button>
-    <p id="login-error" style="color: red;"></p>
+
+  <!-- LOGIN -->
+  <div id="login-container">
+    <div id="login-box">
+      <img src="https://i.ibb.co/G4kykK9F/1-Bienvenida.png" alt="Logo SUPENSIÓN IA" />
+      <h2>Acceso a SUPENSIÓN IA</h2>
+      <input id="referenceInput" type="password" placeholder="Referencia profesional" />
+      <button onclick="validateAccess()">Ingresar</button>
+      <p id="error-msg"></p>
+    </div>
   </div>
 
-  <div id="sidebar" class="hidden">
-    <button onclick="showAllPrompts()">Inicio</button>
-    <div id="category-buttons"></div>
-    <button id="user-access" class="hidden">Acceso a Usuarios</button>
-    <button id="prompts-access" class="hidden">Prompts</button>
-    <button onclick="logout()">Cerrar sesión</button>
+  <!-- PLATAFORMA -->
+  <div id="main-container">
+    <div id="sidebar">
+      <img id="logo" src="https://i.ibb.co/G4kykK9F/1-Bienvenida.png" alt="Logo" />
+      <h1>SUPENSIÓN IA</h1>
+      <button id="btnAccesoUsuarios" onclick="openLink(CSV_URL_USERS)">Acceso a Usuarios</button>
+      <button id="btnAccesoPrompts" onclick="openLink(CSV_URL_PROMPTS)">Acceso a Prompts</button>
+      <button onclick="resetView()">Inicio</button>
+      <button onclick="showTags()">Ver Etiquetas</button>
+      <button onclick="renderSearch()">Buscar Prompts</button>
+      <h2>Categorías</h2>
+      <div id="category-list"></div>
+      <div id="category-count"></div>
+    </div>
+    <div id="content"></div>
   </div>
 
-  <div id="main" class="hidden">
-    <input type="text" class="search-input" placeholder="Buscar..." oninput="searchPrompts(event)" />
-    <div id="subcategory-buttons"></div>
-    <div id="prompts"></div>
-  </div>
-
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
   <script>
-    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSd5yoasP3pxVzZvV-XwaurTOhxNl00JtMRh0bLYnp-SEmg3L-Q1wXH9Q7u-fLZqjJaoY6wmmrD1Y4K/pub?output=csv";
-    let promptsData = [], currentCategory = "", currentSubcategory = "", currentUserState = "";
+    const CSV_URL_USERS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSd5yoasP3pxVzZvV-XwaurTOhxNl00JtMRh0bLYnp-SEmg3L-Q1wXH9Q7u-fLZqjJaoY6wmmrD1Y4K/pub?output=csv';
+    const CSV_URL_PROMPTS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRE3cFMomTeGrhryIxcaX72UnMp_C2aeFLnDvY7jLjC2PjftlxXzhQBdNWiKmrewhVw7qE-lxHzcRUR/pub?gid=0&single=true&output=csv';
+    let prompts = [];
+
+    function openLink(url) { window.open(url, '_blank'); }
+
+    // ----- VALIDACIÓN DE ACCESO -----
+    function validateAccess() {
+      const ref = document.getElementById('referenceInput').value.trim();
+      const msg = document.getElementById('error-msg'); msg.textContent = 'Verificando...';
+
+      fetch(CSV_URL_USERS)
+        .then(r => r.text())
+        .then(data => {
+          const rows = data.split('\n').slice(1);
+          let ok = false;
+          let estado = '';
+
+          for (const row of rows) {
+            const cols = row.split(',');
+            const pass = cols[1]?.trim().replace(/"/g, '');
+            estado = cols[3]?.trim().replace(/"/g, '');
+            if (pass === ref) { ok = true; break; }
+          }
+
+          if (ok) {
+            localStorage.setItem('accessGranted', 'true');
+            document.getElementById('login-container').style.display = 'none';
+            document.getElementById('main-container').style.display = 'flex';
+            fetchCSV();
+          } else {
+            msg.textContent = 'Acceso denegado. Verifique su referencia.';
+          }
+        })
+        .catch(() => { msg.textContent = 'Error al verificar. Intente de nuevo.'; });
+    }
 
     window.onload = () => {
-      const storedAccess = localStorage.getItem("accessReference");
-      if (storedAccess) validateAccess(storedAccess, true);
-      else document.getElementById("login-container").classList.remove("hidden");
+      if (localStorage.getItem('accessGranted') === 'true') {
+        document.getElementById('login-container').style.display = 'none';
+        document.getElementById('main-container').style.display = 'flex';
+        fetchCSV();
+      }
     };
 
-    function validateAccess(ref = null, auto = false) {
-      const inputRef = ref || document.getElementById("reference").value.trim();
-      fetch(CSV_URL)
-        .then(res => res.text())
-        .then(csv => {
-          const rows = csv.trim().split("\n").slice(1).map(line => line.split(","));
-          const user = rows.find(r => r[1] === inputRef);
-          if (!user) return showError("Referencia no válida.");
-          const expiry = new Date(user[2]);
-          const today = new Date();
-          if (today > expiry) return showError("Acceso vencido.");
-          currentUserState = user[3];
-          localStorage.setItem("accessReference", inputRef);
-          initializeApp();
-        })
-        .catch(() => showError("Error al verificar el acceso."));
-
-      function showError(msg) {
-        if (!auto) document.getElementById("login-error").textContent = msg;
-      }
+    // ----- FUNCIONES DE LA PLATAFORMA -----
+    function resetView() {
+      document.getElementById('content').innerHTML = `
+        <div style="text-align:center;">
+          <img src="https://i.ibb.co/G4kykK9F/1-Bienvenida.png" alt="Bienvenida" style="max-width:550px;margin-bottom:20px;" />
+          <h2>Bienvenido a SUPENSIÓN IA</h2>
+          <p>Explora esta plataforma para aprender cómo usar la inteligencia artificial en el ámbito jurídico.</p>
+        </div>
+      `;
     }
 
-    function initializeApp() {
-      document.getElementById("login-container").classList.add("hidden");
-      document.getElementById("sidebar").classList.remove("hidden");
-      document.getElementById("main").classList.remove("hidden");
-      if (currentUserState.includes("M")) {
-        document.getElementById("user-access").classList.remove("hidden");
-        document.getElementById("prompts-access").classList.remove("hidden");
-      }
-      loadPrompts();
-    }
-
-    function logout() {
-      if (confirm("¿Está seguro que desea cerrar sesión?")) {
-        localStorage.removeItem("accessReference");
-        location.reload();
-      }
-    }
-
-    function loadPrompts() {
-      const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRtZ8NUWB0rJmTVJ9rsVqYgZQq0q4xqOe0P51gB1OkL3JYJvLOeN3Wy1rrRwlQhuV0Ad20K7Y3x1Zcs/pub?output=csv";
-      fetch(url)
-        .then(res => res.text())
-        .then(csv => {
-          const rows = csv.trim().split("\n").map(line => line.split(","));
-          const headers = rows.shift();
-          promptsData = rows.map(r => Object.fromEntries(headers.map((h, i) => [h, r[i]])));
-          displayCategories();
-          showAllPrompts();
-        });
-    }
-
-    function displayCategories() {
-      const categories = [...new Set(promptsData.map(p => p.Categoría))];
-      const container = document.getElementById("category-buttons");
-      container.innerHTML = "";
-      categories.forEach(cat => {
-        const btn = document.createElement("button");
-        btn.textContent = cat;
-        btn.onclick = () => filterByCategory(cat);
-        container.appendChild(btn);
+    function fetchCSV() {
+      Papa.parse(CSV_URL_PROMPTS, {
+        download: true,
+        header: true,
+        skipEmptyLines: true,
+        complete: results => {
+          prompts = results.data.filter(p => p.Categoría && p['Título del Prompt'] && p.Prompt);
+          renderCategories();
+          resetView();
+        }
       });
     }
 
-    function filterByCategory(category) {
-      currentCategory = category;
-      currentSubcategory = "";
-      const subcategories = [...new Set(promptsData.filter(p => p.Categoría === category).map(p => p.Subcategoría))];
-      const container = document.getElementById("subcategory-buttons");
-      container.innerHTML = "";
-      subcategories.forEach(sub => {
-        const btn = document.createElement("button");
-        btn.textContent = sub;
-        btn.onclick = () => filterBySubcategory(sub);
-        container.appendChild(btn);
+    function renderCategories() {
+      const counts = {};
+      prompts.forEach(p => counts[p.Categoría] = (counts[p.Categoría] || 0) + 1);
+      const list = document.getElementById('category-list');
+      const countEl = document.getElementById('category-count');
+      list.innerHTML = '';
+      Object.entries(counts).forEach(([cat, num]) => {
+        const btn = document.createElement('button');
+        btn.textContent = `${cat} (${num})`;
+        btn.onclick = () => renderSubcategories(cat);
+        list.appendChild(btn);
       });
-      displayPrompts(promptsData.filter(p => p.Categoría === category));
+      countEl.innerText = `Total Prompts: ${prompts.length}`;
     }
 
-    function filterBySubcategory(subcategory) {
-      currentSubcategory = subcategory;
-      const filtered = promptsData.filter(p => p.Categoría === currentCategory && p.Subcategoría === subcategory);
-      displayPrompts(filtered);
-    }
-
-    function showAllPrompts() {
-      currentCategory = "";
-      currentSubcategory = "";
-      document.getElementById("subcategory-buttons").innerHTML = "";
-      displayPrompts(promptsData);
-    }
-
-    function displayPrompts(prompts) {
-      const container = document.getElementById("prompts");
-      container.innerHTML = "";
-      prompts.forEach(p => {
-        const div = document.createElement("div");
-        div.className = "prompt-preview";
-        const tags = p.Etiquetas ? p.Etiquetas.split(",").map(tag => `<span class="tag">${tag.trim()}</span>`).join("") : "";
-        const promptText = p.Prompt.replace(/\[(.*?)\]/g, (_, text) => `<span contenteditable="true" class="editable">${text}</span>`);
-        div.innerHTML = `<strong>${p.Título}</strong><br><div>${promptText}</div><br>${tags}<br><button onclick="copyPrompt(this)">Copiar</button>`;
-        container.appendChild(div);
+    function renderSubcategories(category) {
+      const subs = {};
+      prompts.filter(p => p.Categoría === category).forEach(p => subs[p.Subcategoría] = (subs[p.Subcategoría] || 0) + 1);
+      const content = document.getElementById('content');
+      content.innerHTML = `
+        <div style="background:#007bff;color:white;padding:10px;border-radius:8px;margin-bottom:15px;">
+          <h2>${category}</h2>
+        </div>
+        <div id="prompt-list"></div>
+      `;
+      const list = document.getElementById('prompt-list');
+      Object.entries(subs).forEach(([sub, num]) => {
+        const d = document.createElement('div');
+        d.className = 'prompt-button';
+        d.textContent = `${sub} (${num})`;
+        d.onclick = () => renderTitles(category, sub);
+        list.appendChild(d);
       });
     }
 
-    function copyPrompt(btn) {
-      const text = btn.parentElement.querySelector("div").innerText;
-      navigator.clipboard.writeText(text).then(() => {
-        btn.textContent = "Copiado!";
-        setTimeout(() => btn.textContent = "Copiar", 1500);
+    function renderTitles(category, subcat) {
+      const filtered = prompts.filter(p => p.Categoría === category && p.Subcategoría === subcat);
+      const content = document.getElementById('content');
+      content.innerHTML = `
+        <div style="background:#007bff;color:white;padding:10px;border-radius:8px;margin-bottom:15px;">
+          <h2>${subcat}</h2>
+        </div>
+        <button class="back-button" onclick="renderSubcategories('${category}')">← Regresar</button>
+        <div id="prompt-list"></div>
+      `;
+      const list = document.getElementById('prompt-list');
+      filtered.forEach(p => {
+        const d = document.createElement('div'); d.className = 'prompt-preview';
+        const resumen = p.Prompt.split(' ').slice(0,60).join(' ') + '...';
+        d.innerHTML = `<strong>${p['Título del Prompt']}</strong><p>${resumen}</p>`;
+        d.onclick = () => showPrompt(p);
+        list.appendChild(d);
       });
     }
 
-    function searchPrompts(event) {
-      const term = event.target.value.toLowerCase();
-      const filtered = promptsData.filter(p =>
-        p.Título.toLowerCase().includes(term) ||
-        p.Categoría.toLowerCase().includes(term) ||
-        p.Subcategoría.toLowerCase().includes(term) ||
-        p.Etiquetas.toLowerCase().includes(term) ||
-        p.Prompt.toLowerCase().includes(term)
-      );
-      displayPrompts(filtered);
+    function showPrompt(p) {
+      window.currentPrompt = p;
+      const content = document.getElementById('content');
+      content.innerHTML = `
+        <h2>${p['Título del Prompt']}</h2>
+        <button class="back-button" onclick="renderTitles('${p.Categoría}','${p.Subcategoría}')">← Regresar</button>
+        <pre>${p.Prompt}</pre>
+      `;
+      (p.Prompt.match(/\[(.*?)\]/g)||[]).forEach(m=>{
+        const f=m.replace(/\[|\]/g,'');
+        content.innerHTML += `<div class="input-container"><label>${f}:</label><input id="${f}" /></div>`;
+      });
+      (p.Prompt.match(/\{(.*?)\}/g)||[]).forEach(m=>{
+        const f=m.replace(/\{|\}/g,'');
+        content.innerHTML += `<div class="input-container"><label>${f}:</label><textarea id="${f}" rows="2" style="width:100%"></textarea></div>`;
+      });
+      content.innerHTML += `<button onclick="generatePrompt()">Generar Prompt</button>`;
+    }
+
+    function generatePrompt() {
+      let txt = window.currentPrompt.Prompt;
+      document.querySelectorAll('#content input,#content textarea').forEach(i=>{
+        txt = txt.replaceAll(`[${i.id}]`,i.value).replaceAll(`{${i.id}}`,i.value);
+      });
+      const c=document.getElementById('content');
+      c.innerHTML += `
+        <div id="generatedPrompt"><h3>Prompt generado:</h3><pre>${txt}</pre>
+        <button class="prompt-button" onclick="copyToClipboard('${txt.replace(/'/g,"\\'")}')">Copiar y Continuar</button></div>`;
+    }
+
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text);
+      alert('Prompt copiado al portapapeles.');
+    }
+
+    function showTags() {
+      const tagMap = {};
+      prompts.forEach(p=>{
+        (p.Etiquetas||'').split(',').map(t=>t.trim()).forEach(tag=>{ if(tag) tagMap[tag]=(tagMap[tag]||0)+1; });
+      });
+      const content=document.getElementById('content');
+      content.innerHTML=`<h2>Etiquetas</h2><div id="prompt-list"></div>`;
+      const list=document.getElementById('prompt-list');
+      Object.entries(tagMap).forEach(([tag,num])=>{
+        const d=document.createElement('div');
+        d.className='prompt-button'; d.textContent=`${tag} (${num})`;
+        d.onclick=()=>renderPromptsByTag(tag);
+        list.appendChild(d);
+      });
+    }
+
+    function renderSearch() {
+      const content=document.getElementById('content');
+      content.innerHTML=`<h2 class="section-title">Buscar Prompts</h2><div class="input-container"><input id="searchInput" placeholder="Escribe palabras clave..." /></div><button class="prompt-button" onclick="handleSearch()">Buscar</button><button class="back-button" onclick="resetView()">← Volver</button><div id="prompt-list" style="margin-top:20px;"></div>`;
+    }
+
+    function handleSearch() {
+      const q=document.getElementById('searchInput').value.toLowerCase().split(',').map(x=>x.trim());
+      const list=document.getElementById('prompt-list'); list.innerHTML='';
+      const matches=prompts.filter(p=> q.some(kw=> (p['Título del Prompt']+' '+p.Prompt).toLowerCase().includes(kw)));
+      if(!matches.length) return list.innerHTML='<p>No se encontraron prompts.</p>';
+      matches.forEach(p=>{
+        const d=document.createElement('div'); d.className='prompt-button'; d.textContent=p['Título del Prompt']; d.onclick=()=>showPrompt(p); list.appendChild(d);
+      });
+    }
+
+    function renderPromptsByTag(tag) {
+      const filtered=prompts.filter(p=>(p.Etiquetas||'').includes(tag));
+      const content=document.getElementById('content');
+      content.innerHTML=`<h2>Prompts: ${tag}</h2><button class="back-button" onclick="showTags()">← Regresar</button><div id="prompt-list"></div>`;
+      const list=document.getElementById('prompt-list');
+      filtered.forEach(p=>{
+        const resumen=p.Prompt.split(' ').slice(0,60).join(' ')+'...';
+        const d=document.createElement('div'); d.className='prompt-button'; d.innerHTML=`<strong>${p['Título del Prompt']}</strong><br><small>${resumen}</small>`; d.onclick=()=>showPrompt(p); list.appendChild(d);
+      });
     }
   </script>
 </body>
