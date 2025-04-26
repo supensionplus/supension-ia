@@ -75,6 +75,12 @@
     <div id="mensajeFinal"></div>
   </div>
 
+  <div class="container hidden" id="plataformaContainer">
+    <h2>¡Bienvenido a SUPENSION IA!</h2>
+    <p>Acceso concedido. Ya puedes explorar la plataforma.</p>
+    <button onclick="cerrarSesion()">Cerrar sesión</button>
+  </div>
+
   <script>
     const BLOQUEO_MS = 3600000; // 1 hora
     let intentos = 0;
@@ -85,6 +91,7 @@
       const ahora = Date.now();
 
       if (referenciaGuardada && (!expiracion || ahora < parseInt(expiracion))) {
+        mostrarPlataforma();
         redirigirPlataforma();
       } else {
         localStorage.removeItem('referencia');
@@ -133,8 +140,9 @@
         mensaje.innerText = '';
         localStorage.setItem('referencia', referencia);
         setTimeout(() => {
+          mostrarPlataforma();
           redirigirPlataforma();
-        }, 1000);
+        }, 2000);
       } else {
         intentos++;
         if (intentos >= 3) {
@@ -153,8 +161,19 @@
       return 'Buenas noches';
     }
 
+    function mostrarPlataforma() {
+      document.getElementById('bienvenidaContainer').classList.add('hidden');
+      document.getElementById('plataformaContainer').classList.remove('hidden');
+    }
+
+    function cerrarSesion() {
+      localStorage.removeItem('referencia');
+      localStorage.removeItem('expiracion');
+      location.reload();
+    }
+
     function redirigirPlataforma() {
-      window.location.href = 'plataforma.html'; // Aquí cambias si usas otro nombre o ruta
+      window.open('https://sites.google.com/view/supensionia2025/prueba-2', '_blank');
     }
   </script>
 </body>
