@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SUPENSION IA - Plataforma de Prompts</title>
+  <style>
+    body {
+      display: flex;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      height: 100vh;
+    }
+    #sidebar {
+      width: 25%;
+      padding: 20px;
+      border-right: 1px solid #ccc;
+      overflow-y: auto;
+    }
+    #content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    button {
+      display: block;
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 10px;
+      cursor: pointer;
+      border: none;
+      background: #007bff;
+      color: white;
+      border-radius: 5px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .prompt-button {
+      display: inline-block;
+      margin: 5px;
+      padding: 8px 12px;
+      border: 1px solid #007bff;
+      border-radius: 5px;
+      cursor: pointer;
+      background: #f8f9fa;
+    }
+    .input-container {
+      margin-bottom: 15px;
+    }
+    .prompt-preview {
+      margin-bottom: 15px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background: #f4f4f4;
+      cursor: pointer;
+    }
+    .prompt-preview:hover {
+      background: #e9ecef;
+    }
+    .back-button {
+      background: #6c757d;
+    }
+    .back-button:hover {
+      background: #5a6268;
+    }
+    #logo {
+      width: 220px;
+      margin-bottom: 20px;
+    }
+
+  .section-title {
+    background-color: #007BFF;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 10px;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+  }
+
+.prompt-button {
+  background-color: #007BFF;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+.prompt-button:hover {
+  background-color: #0056b3;
+}
+
+
+
+  </style>
+</head>
+<body>
+  <div id="sidebar">
+    <img src="https://i.ibb.co/G4kykK9F/1-Bienvenida.png" alt="Logo" id="logo" style="max-width: 500px; margin-bottom: 20px;">
+    <h1>SUPENSION IA</h1>
+    <button onclick="openLink('https://docs.google.com/spreadsheets/d/1qAchIw1kVZgnep3iVJo8etNNDeuQCacHzkWzlznJklE/edit?usp=sharing')">Acceso a Usuarios</button>
+    <button onclick="openLink('https://docs.google.com/spreadsheets/d/1801UA05SUiAxuSVfE4qZCoqT7aedbnPkArwU3q3wjpI/edit?usp=sharing')">Acceso a Prompts</button>
+    <button onclick="resetView()">Inicio</button>
+    <button onclick="showTags()">Ver Etiquetas</button>
+    <button onclick="renderSearch()">Buscar Prompts</button>
+    <h2>Categorías</h2>
+    <div id="category-list"></div>
+    <div id="category-count"></div>
+  </div>
+
+  <div id="content"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
+  <script>
+    let prompts = [];
+
+    function openLink(url) {
+      window.open(url, '_blank');
+    }
+
+    function resetView() {
+      document.getElementById('content').innerHTML = `
+        <div style="text-align: center;">
+          <img src="https://i.ibb.co/G4kykK9F/1-Bienvenida.png" alt="Bienvenida" style="max-width: 550px; margin-bottom: 20px;">
+          <h2>Bienvenido a SUPENSION IA</h2>
+          <p>Explora esta plataforma para aprender cómo usar la inteligencia artificial en el ámbito jurídico. Usa nuestros prompts como herramientas estratégicas en tu trabajo diario.</p>
+        </div>
+      `;
+    }
+
+    function fetchCSV() {
+      fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vRE3cFMomTeGrhryIxcaX72UnMp_C2aeFLnDvY7jLjC2PjftlxXzhQBdNWiKmrewhVw7qE-lxHzcRUR/pub?gid=0&single=true&output=csv')
+        .then(response => response.text())
+        .then(data => {
+          const parsed = Papa.parse(data, { header: true, skipEmptyLines: true });
+          prompts = parsed.data.map(p => ({
+            category: p["Categoría"],
+            subcategory: p["Subcategoría"],
+            title: p["Título del Prompt"],
+            prompt: p["Prompt"],
+            tags: p["Etiquetas"]?.split(',').map(t => t.trim()) || []
+          })).filter(p => p.category && p.title && p.prompt);
+          renderCategories();
+          resetView();
+        });
+    }
+
+    function renderCategories() {
+      const categories = {};
+      prompts.forEach(p => {
+        categories[p.category] = (categories[p.category] || 0) + 1;
+      });
+      const categoryList = document.getElementById('category-list');
+      const countEl = document.getElementById('category-count');
+      categoryList.innerHTML = '';
+      Object.entries(categories).forEach(([cat, count]) => {
+        const button = document.createElement('button');
+        button.innerText = `${cat} (${count})`;
+        button.onclick = () => renderSubcategories(cat);
+        categoryList.appendChild(button);
+      });
+      countEl.innerText = `Total Prompts: ${prompts.length}`;
+    }
+
+function renderSubcategories(category) {
+  const subs = {};
+  prompts.filter(p => p.category === category).forEach(p => {
+    subs[p.subcategory] = (subs[p.subcategory] || 0) + 1;
+  });
+
+  const content = document.getElementById('content');
+  content.innerHTML = `
+    <div style="background-color: #007BFF; color: white; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+      <h2 style="margin: 0;">${category}</h2>
+    </div>
+    <div id="prompt-list"></div>
+  `;
+
+  const promptList = document.getElementById('prompt-list');
+  Object.entries(subs).forEach(([sub, count]) => {
+    const btn = document.createElement('div');
+    btn.innerText = `${sub} (${count})`;
+    btn.className = 'prompt-button';
+    btn.onclick = () => renderTitles(category, sub);
+    promptList.appendChild(btn);
+  });
+}
+
+function renderTitles(category, subcategory) {
+  const filtered = prompts.filter(p => p.category === category && p.subcategory === subcategory);
+  const content = document.getElementById('content');
+  content.innerHTML = `
+    <div style="background-color: #007BFF; color: white; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+      <h2 style="margin: 0;">${subcategory}</h2>
+    </div>
+    <button class="back-button" onclick="renderSubcategories('${category}')">← Regresar</button>
+    <div id="prompt-list"></div>
+  `;
+  const promptList = document.getElementById('prompt-list');
+
+  filtered.forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'prompt-preview';
+    const resumen = p.prompt.split(" ").slice(0, 60).join(" ");
+    div.innerHTML = `<strong>${p.title}</strong><p>${resumen}...</p>`;
+    div.onclick = () => showPrompt(p);
+    promptList.appendChild(div);
+  });
+}
+
+
+function showPrompt(prompt) {
+  // Guarda el contexto para volver luego
+  window.lastCategory = prompt.category;
+  window.lastSubcategory = prompt.subcategory;
+  window.currentPromptTemplate = prompt.prompt;
+
+  const content = document.getElementById('content');
+  const promptText = prompt.prompt;
+
+  // Encabezado y botón regresar
+  content.innerHTML = `
+    <h2>${prompt.title}</h2>
+    <button class="back-button" onclick="renderTitles('${prompt.category}', '${prompt.subcategory}')">← Regresar</button>
+    <pre style="white-space: pre-wrap; font-family: inherit;">${promptText}</pre>
+  `;
+
+  // Inputs cortos entre [ ]
+  const shortMatches = promptText.match(/\[(.*?)\]/g) || [];
+  shortMatches.forEach(match => {
+    const field = match.replace(/[\[\]]/g, '');
+    content.innerHTML += `
+      <div class="input-container">
+        <label>${field}:</label>
+        <input type="text" id="${field}" />
+      </div>
+    `;
+  });
+
+  // Inputs largos entre { }
+  const longMatches = promptText.match(/\{(.*?)\}/g) || [];
+  longMatches.forEach(match => {
+    const field = match.replace(/[{}]/g, '');
+    content.innerHTML += `
+      <div class="input-container">
+        <label>${field}:</label>
+        <textarea rows="2" style="width:100%" id="${field}"></textarea>
+      </div>
+    `;
+  });
+
+  // Botón para generar el prompt
+  content.innerHTML += `
+    <button onclick="generatePrompt()">Generar Prompt</button>
+  `;
+}
+
+
+
+function generatePrompt() {
+  let finalPrompt = window.currentPromptTemplate;
+
+  document.querySelectorAll('#content input, #content textarea').forEach(input => {
+    const value = input.value.trim();
+    const id = input.id;
+    finalPrompt = finalPrompt
+      .replaceAll(`[${id}]`, value)
+      .replaceAll(`{${id}}`, value);
+  });
+
+  // Creamos el bloque generado SIN borrar el contenido anterior
+  const generatedDiv = document.createElement('div');
+  generatedDiv.id = 'generatedPrompt';
+  generatedDiv.style.marginTop = '20px';
+  generatedDiv.innerHTML = `
+    <h3>Prompt generado:</h3>
+    <pre style="white-space: pre-wrap; font-family: inherit;">${finalPrompt}</pre>
+  `;
+
+  // Botón con estilo correcto
+  const btn = document.createElement('button');
+  btn.className = 'prompt-button'; // Asegúrate que esta clase exista en tu CSS
+  btn.style.marginTop = '10px';
+  btn.textContent = 'Copiar y Continuar';
+  btn.addEventListener('click', () => copyAndReturn(finalPrompt));
+
+  generatedDiv.appendChild(btn);
+
+  // Evitar duplicar si ya existe
+  const existing = document.getElementById('generatedPrompt');
+  if (existing) existing.remove();
+
+  document.getElementById('content').appendChild(generatedDiv);
+}
+
+
+function copyAndReturn(text) {
+  copyToClipboard(text);
+
+  const copiedMessage = document.createElement('div');
+  copiedMessage.textContent = '✅ ¡Prompt copiado!';
+  copiedMessage.style.position = 'fixed';
+  copiedMessage.style.top = '50%';
+  copiedMessage.style.left = '50%';
+  copiedMessage.style.transform = 'translate(-50%, -50%)';
+  copiedMessage.style.backgroundColor = '#007BFF';
+  copiedMessage.style.color = '#fff';
+  copiedMessage.style.padding = '14px 28px';
+  copiedMessage.style.borderRadius = '12px';
+  copiedMessage.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.2)';
+  copiedMessage.style.fontSize = '16px';
+  copiedMessage.style.zIndex = '9999';
+  copiedMessage.style.transition = 'opacity 0.3s ease';
+  copiedMessage.style.opacity = '1';
+
+  document.body.appendChild(copiedMessage);
+
+  setTimeout(() => {
+    copiedMessage.style.opacity = '0';
+    setTimeout(() => {
+      document.body.removeChild(copiedMessage);
+      renderTitles(window.lastCategory, window.lastSubcategory);  // Regresa a la lista de prompts
+    }, 300);
+  }, 2000);
+}
+
+
+
+function backToPromptList() {
+  // Puedes implementar esta función para regresar a la lista de prompts según la lógica actual
+  if (window.previousPromptListRender) {
+    window.previousPromptListRender();
+  }
+}
+
+
+function showTags() {
+  const tagMap = {};
+  prompts.forEach(p => {
+    p.tags.forEach(tag => {
+      tagMap[tag] = (tagMap[tag] || 0) + 1;
+    });
+  });
+
+  const content = document.getElementById('content');
+  content.innerHTML = `<h2>Etiquetas</h2><div id="prompt-list"></div>`;
+  const promptList = document.getElementById('prompt-list');
+
+  Object.entries(tagMap).forEach(([tag, count]) => {
+    const btn = document.createElement('div');
+    btn.innerText = `${tag} (${count})`;
+    btn.className = 'prompt-button';
+    btn.onclick = () => renderPromptsByTag(tag);
+    promptList.appendChild(btn);
+  });
+}
+
+
+// 1) Mostrar el UI de búsqueda en el área de contenido
+function renderSearch() {
+  const content = document.getElementById('content');
+  content.innerHTML = `
+    <h2 class="section-title">Buscar Prompts</h2>
+    <p>Escribe palabras clave separadas por comas:</p>
+    <div class="input-container">
+      <input type="text" id="searchInput"
+             placeholder="Ej: sanciones, confidencialidad, investigación"
+             style="width:100%; padding:8px; font-size:16px;" />
+    </div>
+    <button class="prompt-button" onclick="handleSearch()">Buscar</button>
+    <button class="back-button" onclick="resetView()">← Volver</button>
+    <div id="prompt-list" style="margin-top:20px;"></div>
+  `;
+}
+
+// 2) Filtrar los prompts por las palabras clave y mostrarlos
+function handleSearch() {
+  const query = document.getElementById('searchInput').value.toLowerCase();
+  const keywords = query.split(',')
+                        .map(k => k.trim())
+                        .filter(k => k);
+  const promptList = document.getElementById('prompt-list');
+  promptList.innerHTML = '';
+
+  if (keywords.length === 0) {
+    promptList.innerHTML = '<p>Por favor ingresa al menos una palabra clave.</p>';
+    return;
+  }
+
+  const matches = prompts.filter(p => {
+    const text = (p.title + ' ' + p.prompt).toLowerCase();
+    return keywords.some(kw => text.includes(kw));
+  });
+
+  if (matches.length === 0) {
+    promptList.innerHTML = '<p>No se encontraron prompts que coincidan.</p>';
+    return;
+  }
+
+  // Usa tu función existente para mostrar la lista de prompts
+  matches.forEach(p => {
+    const btn = document.createElement('div');
+    btn.className = 'prompt-button';
+    btn.innerText = p.title;
+    btn.onclick = () => showPrompt(p);
+    promptList.appendChild(btn);
+  });
+}
+
+
+
+function renderPromptsByTag(tag) {
+  const filtered = prompts.filter(p => p.tags.includes(tag));
+  const content = document.getElementById('content');
+  content.innerHTML = `<h2>Prompts con etiqueta: ${tag}</h2><button class="back-button" onclick="showTags()">← Regresar</button><div id="prompt-list"></div>`;
+
+  const promptList = document.getElementById('prompt-list');
+  filtered.forEach(p => {
+    const resumen = p.prompt.length > 300 ? p.prompt.slice(0, 300) + '...' : p.prompt;
+    const resumenCorto = resumen.split(/\s+/).slice(0, 60).join(' ');
+    const item = document.createElement('div');
+    item.className = 'prompt-button';
+    item.innerHTML = `<strong>${p.title}</strong><br><small>${resumenCorto}</small>`;
+    item.onclick = () => showPrompt(p);
+    promptList.appendChild(item);
+  });
+}
+
+
+
+function copyToClipboard(text) {
+  const textarea = document.createElement('textarea');
+  textarea.value = text;
+  document.body.appendChild(textarea);
+  textarea.select();
+  document.execCommand('copy');
+  document.body.removeChild(textarea);
+
+  // Crear mensaje de copiado con estilo más visible
+  const copiedMessage = document.createElement('div');
+  copiedMessage.textContent = '✅ ¡Prompt copiado!';
+  copiedMessage.style.position = 'fixed';
+  copiedMessage.style.top = '50%';
+  copiedMessage.style.left = '50%';
+  copiedMessage.style.transform = 'translate(-50%, -50%)';
+  copiedMessage.style.backgroundColor = '#007BFF'; // Azul vibrante
+  copiedMessage.style.color = '#fff';
+  copiedMessage.style.padding = '14px 28px';
+  copiedMessage.style.borderRadius = '12px';
+  copiedMessage.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.2)';
+  copiedMessage.style.fontSize = '16px';
+  copiedMessage.style.zIndex = '9999';
+  copiedMessage.style.transition = 'opacity 0.3s ease';
+  copiedMessage.style.opacity = '1';
+
+  document.body.appendChild(copiedMessage);
+
+  setTimeout(() => {
+    copiedMessage.style.opacity = '0';
+    setTimeout(() => document.body.removeChild(copiedMessage), 300);
+  }, 2000);
+}
+
+
+
+
+
+    fetchCSV();
+  </script>
+</body>
+</html>
