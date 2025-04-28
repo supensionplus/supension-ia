@@ -117,8 +117,15 @@
     <h2>Categorías</h2>
     <div id="category-list"></div>
     <div id="category-count"></div>
+   
+  </div>
 
-    document.addEventListener('DOMContentLoaded', () => {
+  <div id="content"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
+  <script>
+
+        document.addEventListener('DOMContentLoaded', () => {
     const estado = localStorage.getItem('estado');
     if (estado === 'M') {
       // mostramos ambos botones
@@ -126,13 +133,10 @@
       document.getElementById('btnAccesoPrompts').style.display = 'block';
     }
   });
+
     
-  </div>
-
-  <div id="content"></div>
-
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
-  <script>
+    
+    
     let prompts = [];
 
     function openLink(url) {
