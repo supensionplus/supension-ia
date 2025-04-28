@@ -101,57 +101,64 @@
     }
 
     async function validarAcceso() {
-      const refInput = document.getElementById('referencia');
-      const mensaje = document.getElementById('mensaje');
-      const saludo = document.getElementById('saludo');
-      const referencia = refInput.value.trim();
-      if (!referencia) return;
+  const refInput = document.getElementById('referencia');
+  const mensaje = document.getElementById('mensaje');
+  const saludo = document.getElementById('saludo');
+  const referencia = refInput.value.trim();
+  if (!referencia) return;
 
-      const ahora = Date.now();
-      const expiracion = localStorage.getItem('expiracion');
-      if (expiracion && ahora < parseInt(expiracion)) {
-        mensaje.innerText = 'Demasiados intentos. Intenta más tarde.';
-        return;
+  const ahora = Date.now();
+  const expiracion = localStorage.getItem('expiracion');
+  if (expiracion && ahora < parseInt(expiracion)) {
+    mensaje.innerText = 'Demasiados intentos. Intenta más tarde.';
+    return;
+  }
+
+  const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSd5yoasP3pxVzZvV-XwaurTOhxNl00JtMRh0bLYnp-SEmg3L-Q1wXH9Q7u-fLZqjJaoY6wmmrD1Y4K/pub?output=csv';
+  const response = await fetch(url);
+  const data = await response.text();
+  const rows = data.split('\n').slice(1);
+
+  let accesoPermitido = false;
+  let nombreUsuario = '';
+  let estadoUsuario = null;  // ← Aquí guardaremos el estado
+
+  for (const row of rows) {
+    const [usuario, clave, fechaVencimiento, estado] = row.split(',').map(c => c.trim());
+    if (clave === referencia) {
+      const hoy = new Date();
+      const vencimiento = new Date(fechaVencimiento);
+      if (hoy <= vencimiento) {
+        accesoPermitido = true;
+        nombreUsuario = usuario;
+        estadoUsuario = estado; // ← Capturo el estado ("M", etc)
+        break;
       }
+    }
+  }
 
-      const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSd5yoasP3pxVzZvV-XwaurTOhxNl00JtMRh0bLYnp-SEmg3L-Q1wXH9Q7u-fLZqjJaoY6wmmrD1Y4K/pub?output=csv';
-      const response = await fetch(url);
-      const data = await response.text();
-      const rows = data.split('\n').slice(1);
+  if (accesoPermitido) {
+    saludo.innerText = obtenerSaludo() + ", " + nombreUsuario;
+    mensaje.innerText = '';
 
-      let accesoPermitido = false;
-      let nombreUsuario = '';
+    // ← Guardamos referencia y estado en localStorage
+    localStorage.setItem('referencia', referencia);
+    localStorage.setItem('estado', estadoUsuario);
 
-      for (const row of rows) {
-        const [usuario, clave, fechaVencimiento, estado] = row.split(',').map(c => c.trim());
-        if (clave === referencia) {
-          const hoy = new Date();
-          const vencimiento = new Date(fechaVencimiento);
-          if (hoy <= vencimiento) {
-            accesoPermitido = true;
-            nombreUsuario = usuario;
-            break;
-          }
-        }
-      }
+    setTimeout(() => {
+      mostrarPlataforma();
+      redirigirPlataforma();
+    }, 2000);
+  } else {
+    intentos++;
+    if (intentos >= 3) {
+      localStorage.setItem('expiracion', ahora + BLOQUEO_MS);
+      mensaje.innerText = 'Demasiados intentos fallidos. Intenta de nuevo en 1 hora.';
+    } else {
+      mensaje.innerText = 'Referencia inválida o vencida';
+    }
+  }
 
-      if (accesoPermitido) {
-        saludo.innerText = obtenerSaludo() + ", " + nombreUsuario;
-        mensaje.innerText = '';
-        localStorage.setItem('referencia', referencia);
-        setTimeout(() => {
-          mostrarPlataforma();
-          redirigirPlataforma();
-        }, 2000);
-      } else {
-        intentos++;
-        if (intentos >= 3) {
-          localStorage.setItem('expiracion', ahora + BLOQUEO_MS);
-          mensaje.innerText = 'Demasiados intentos fallidos. Intenta de nuevo en 1 hora.';
-        } else {
-          mensaje.innerText = 'Referencia inválida o vencida';
-        }
-      }
     }
 
     function obtenerSaludo() {
