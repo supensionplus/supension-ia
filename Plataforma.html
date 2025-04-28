@@ -105,6 +105,7 @@
     <button onclick="openLink('https://docs.google.com/spreadsheets/d/1qAchIw1kVZgnep3iVJo8etNNDeuQCacHzkWzlznJklE/edit?usp=sharing')">Acceso a Usuarios</button>
     <button onclick="openLink('https://docs.google.com/spreadsheets/d/1801UA05SUiAxuSVfE4qZCoqT7aedbnPkArwU3q3wjpI/edit?usp=sharing')">Acceso a Prompts</button>
     <button onclick="resetView()">Inicio</button>
+    <button onclick="logout()">Cerrar sesión</button>
     <button onclick="showTags()">Ver Etiquetas</button>
     <button onclick="renderSearch()">Buscar Prompts</button>
     <h2>Categorías</h2>
@@ -132,6 +133,15 @@
       `;
     }
 
+    function logout() {
+    if (confirm("¿Seguro que quieres cerrar sesión?")) {
+        localStorage.clear(); // Borra los datos guardados
+        window.location.href = "index.html"; // Redirige al inicio de sesión
+    }
+    }    
+
+
+    
     function fetchCSV() {
       fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vRE3cFMomTeGrhryIxcaX72UnMp_C2aeFLnDvY7jLjC2PjftlxXzhQBdNWiKmrewhVw7qE-lxHzcRUR/pub?gid=0&single=true&output=csv')
         .then(response => response.text())
