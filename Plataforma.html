@@ -102,8 +102,14 @@
   <div id="sidebar">
     <img src="https://i.ibb.co/G4kykK9F/1-Bienvenida.png" alt="Logo" id="logo" style="max-width: 500px; margin-bottom: 20px;">
     <h1>SUPENSION IA</h1>
-    <button onclick="openLink('https://docs.google.com/spreadsheets/d/1qAchIw1kVZgnep3iVJo8etNNDeuQCacHzkWzlznJklE/edit?usp=sharing')">Acceso a Usuarios</button>
-    <button onclick="openLink('https://docs.google.com/spreadsheets/d/1801UA05SUiAxuSVfE4qZCoqT7aedbnPkArwU3q3wjpI/edit?usp=sharing')">Acceso a Prompts</button>
+    <button id="btnAccesoUsuarios" style="display:none;"
+            onclick="openLink('https://docs.google.com/spreadsheets/d/1qAchIw1kVZgnep3iVJo8etNNDeuQCacHzkWzlznJklE/edit?usp=sharing')">
+      Acceso a Usuarios
+    </button>
+    <button id="btnAccesoPrompts" style="display:none;"
+            onclick="openLink('https://docs.google.com/spreadsheets/d/1801UA05SUiAxuSVfE4qZCoqT7aedbnPkArwU3q3wjpI/edit?usp=sharing')">
+      Acceso a Prompts
+    </button>
     <button onclick="resetView()">Inicio</button>
     <button onclick="logout()">Cerrar sesión</button>
     <button onclick="showTags()">Ver Etiquetas</button>
@@ -111,6 +117,16 @@
     <h2>Categorías</h2>
     <div id="category-list"></div>
     <div id="category-count"></div>
+
+    document.addEventListener('DOMContentLoaded', () => {
+    const estado = localStorage.getItem('estado');
+    if (estado === 'M') {
+      // mostramos ambos botones
+      document.getElementById('btnAccesoUsuarios').style.display = 'block';
+      document.getElementById('btnAccesoPrompts').style.display = 'block';
+    }
+  });
+    
   </div>
 
   <div id="content"></div>
