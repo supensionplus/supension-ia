@@ -533,11 +533,61 @@ function mostrarMensaje(texto) {
 }
 
 
+function mostrarFavoritos() {
+  const content = document.getElementById('content');
+  const favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
 
+  if (favoritos.length === 0) {
+    content.innerHTML = '<p>No hay prompts guardados como favoritos.</p>';
+    return;
+  }
 
-    
+  let html = `
+    <h2>📌 Tus Favoritos</h2>
+    <table style="width:100%; border-collapse: collapse;">
+      <thead>
+        <tr>
+          <th style="text-align:left; border-bottom:1px solid #ccc;">Categoría</th>
+          <th style="text-align:left; border-bottom:1px solid #ccc;">Subcategoría</th>
+          <th style="text-align:left; border-bottom:1px solid #ccc;">Título</th>
+          <th style="text-align:left; border-bottom:1px solid #ccc;">Extracto</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
 
+  favoritos.forEach(fav => {
+    const extracto = fav.prompt
+      .split('\n')
+      .slice(0, 5)
+      .join('<br>')
+      .replace(/"/g, '&quot;');
 
+    html += `
+      <tr style="cursor:pointer;" onclick='ejecutarFavorito(${JSON.stringify(fav).replace(/'/g, "\\'")})'>
+        <td>${fav.category}</td>
+        <td>${fav.subcategory}</td>
+        <td>${fav.title}</td>
+        <td>${extracto}</td>
+      </tr>
+    `;
+  });
+
+  html += `</tbody></table>`;
+  content.innerHTML = html;
+}
+
+// Ejecuta el favorito como si se hubiera abierto desde la lista
+function ejecutarFavorito(fav) {
+  showPrompt({
+    id: fav.id,
+    title: fav.title,
+    description: fav.description,
+    prompt: fav.prompt,
+    category: fav.category,
+    subcategory: fav.subcategory
+  });
+}
 
     
     fetchCSV();
