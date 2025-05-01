@@ -260,6 +260,13 @@ function showPrompt(prompt) {
     <pre style="white-space: pre-wrap; font-family: inherit;">${promptText}</pre>
   `;
 
+    <!-- ✅ BOTÓN DE FAVORITOS -->
+    <button onclick="agregarAFavoritos('${prompt.id}', \`${prompt.title}\`, \`${prompt.description || ''}\`, \`${promptText}\`)">⭐ Agregar a Favoritos</button>
+  `;
+
+
+
+  
   // Inputs cortos entre [ ]
   const shortMatches = promptText.match(/\[(.*?)\]/g) || [];
   shortMatches.forEach(match => {
