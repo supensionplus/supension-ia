@@ -498,8 +498,53 @@ function copyToClipboard(text) {
 }
 
 
+function agregarAFavoritos(id, titulo, descripcion, texto) {
+  // Obtener favoritos actuales
+  const favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
+
+  // Verificar si ya existe
+  const yaExiste = favoritos.some(p => p.id === id);
+
+  if (yaExiste) {
+    mostrarMensaje("⚠️ El prompt ya está en favoritos.");
+    return;
+  }
+
+  // Agregar nuevo favorito
+  favoritos.push({ id, titulo, descripcion, texto });
+  localStorage.setItem('favoritos', JSON.stringify(favoritos));
+
+  mostrarMensaje("✅ Prompt agregado a favoritos.");
+}
 
 
+
+function mostrarMensaje(texto) {
+  const mensaje = document.createElement("div");
+  mensaje.textContent = texto;
+  mensaje.style.position = "fixed";
+  mensaje.style.top = "50%";
+  mensaje.style.left = "50%";
+  mensaje.style.transform = "translate(-50%, -50%)";
+  mensaje.style.background = "#333";
+  mensaje.style.color = "#fff";
+  mensaje.style.padding = "12px 20px";
+  mensaje.style.borderRadius = "10px";
+  mensaje.style.zIndex = "9999";
+  mensaje.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
+  mensaje.style.fontSize = "16px";
+
+  document.body.appendChild(mensaje);
+
+  setTimeout(() => {
+    mensaje.remove();
+  }, 2500); // El mensaje desaparece en 2.5 segundos
+}
+
+
+
+
+    
 
 
 
