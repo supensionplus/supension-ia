@@ -155,11 +155,18 @@
     }
 
     function logout() {
-    if (confirm("¿Seguro que quieres cerrar sesión?")) {
-        localStorage.clear(); // Borra los datos guardados
-        window.location.href = "index.html"; // Redirige al inicio de sesión
+  if (confirm("¿Estás seguro de que deseas cerrar sesión?")) {
+    const referencia = localStorage.getItem('referencia');
+    // Conserva los favoritos del usuario actual
+    const favoritos = localStorage.getItem(`favoritos_${referencia}`);
+    localStorage.clear();
+    if (favoritos) {
+      localStorage.setItem(`favoritos_${referencia}`, favoritos);
     }
-    }    
+    location.reload();
+  }
+}
+
 
 
     
@@ -258,11 +265,12 @@ function showPrompt(prompt) {
 
   // Encabezado, botón regresar, texto del prompt y botón de favoritos
   content.innerHTML = `
-    <h2>${prompt.title}</h2>
-    <button class="back-button" onclick="renderTitles('${prompt.category}', '${prompt.subcategory}')">← Regresar</button>
-    <pre style="white-space: pre-wrap; font-family: inherit;">${promptText}</pre>
-    <button onclick="agregarAFavoritos('${promptId}', \`${prompt.title}\`, \`${prompt.description || ''}\`, \`${promptText}\`, '${prompt.category}', '${prompt.subcategory}')">⭐ Agregar a Favoritos</button>
-  `;
+  <h2>${prompt.title}</h2>
+  <button class="back-button" onclick="renderTitles('${prompt.category}', '${prompt.subcategory}')">← Regresar</button>
+  <pre style="white-space: pre-wrap; font-family: inherit;">${promptText}</pre>
+  <button onclick="agregarAFavoritos('${prompt.id}', \`${prompt.title}\`, \`${prompt.description || ''}\`, \`${promptText}\`, '${prompt.category}', '${prompt.subcategory}')">⭐ Agregar a Favoritos</button>
+`;
+
 
   // Inputs cortos entre [ ]
   const shortMatches = promptText.match(/\[(.*?)\]/g) || [];
@@ -502,19 +510,25 @@ function copyToClipboard(text) {
 
 
 function agregarAFavoritos(id, title, description, prompt, category, subcategory) {
-  const favoritos = JSON.parse(localStorage.getItem('favoritos') || '[]');
+  const referencia = localStorage.getItem('referencia'); // clave del usuario actual
+  if (!referencia) return;
 
-  const yaExiste = favoritos.some(p => p.id === id);
+  const claveFavoritos = `favoritos_${referencia}`;
+  const favoritos = JSON.parse(localStorage.getItem(claveFavoritos)) || [];
+
+  const yaExiste = favoritos.some(f => f.id === id);
   if (yaExiste) {
-    mostrarMensaje("⚠️ Este prompt ya está en Favoritos");
+    mostrarMensaje("⭐ El prompt ya está en tus favoritos");
     return;
   }
 
   favoritos.push({ id, title, description, prompt, category, subcategory });
-  localStorage.setItem('favoritos', JSON.stringify(favoritos));
-  mostrarMensaje("✅ Prompt agregado a Favoritos");
+  localStorage.setItem(claveFavoritos, JSON.stringify(favoritos));
+  mostrarMensaje("✅ Prompt agregado a favoritos");
 }
 
+
+    
 function mostrarMensaje(texto) {
   const msg = document.createElement('div');
   msg.textContent = texto;
