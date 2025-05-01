@@ -253,11 +253,12 @@ function showPrompt(prompt) {
   const content = document.getElementById('content');
   const promptText = prompt.prompt;
 
-  // Encabezado y botón regresar
+  // Encabezado, botón regresar, texto del prompt y botón de favoritos
   content.innerHTML = `
     <h2>${prompt.title}</h2>
     <button class="back-button" onclick="renderTitles('${prompt.category}', '${prompt.subcategory}')">← Regresar</button>
     <pre style="white-space: pre-wrap; font-family: inherit;">${promptText}</pre>
+    <button onclick="agregarAFavoritos('${prompt.id}', \`${prompt.title}\`, \`${prompt.description || ''}\`, \`${promptText}\`)">⭐ Agregar a Favoritos</button>
   `;
 
   // Inputs cortos entre [ ]
