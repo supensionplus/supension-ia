@@ -253,12 +253,15 @@ function showPrompt(prompt) {
   const content = document.getElementById('content');
   const promptText = prompt.prompt;
 
+  // Asegurarse de que tenga un ID único
+  const promptId = prompt.id || `${prompt.category}-${prompt.subcategory}-${prompt.title}`.replace(/\s+/g, '_');
+
   // Encabezado, botón regresar, texto del prompt y botón de favoritos
   content.innerHTML = `
     <h2>${prompt.title}</h2>
     <button class="back-button" onclick="renderTitles('${prompt.category}', '${prompt.subcategory}')">← Regresar</button>
     <pre style="white-space: pre-wrap; font-family: inherit;">${promptText}</pre>
-    <button onclick="agregarAFavoritos('${prompt.id}', \`${prompt.title}\`, \`${prompt.description || ''}\`, \`${promptText}\`)">⭐ Agregar a Favoritos</button>
+    <button onclick="agregarAFavoritos('${promptId}', \`${prompt.title}\`, \`${prompt.description || ''}\`, \`${promptText}\`, '${prompt.category}', '${prompt.subcategory}')">⭐ Agregar a Favoritos</button>
   `;
 
   // Inputs cortos entre [ ]
@@ -498,47 +501,35 @@ function copyToClipboard(text) {
 }
 
 
-function agregarAFavoritos(id, titulo, descripcion, texto) {
-  // Obtener favoritos actuales
-  const favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
+function agregarAFavoritos(id, title, description, prompt, category, subcategory) {
+  const favoritos = JSON.parse(localStorage.getItem('favoritos') || '[]');
 
-  // Verificar si ya existe
   const yaExiste = favoritos.some(p => p.id === id);
-
   if (yaExiste) {
-    mostrarMensaje("⚠️ El prompt ya está en favoritos.");
+    mostrarMensaje("⚠️ Este prompt ya está en Favoritos");
     return;
   }
 
-  // Agregar nuevo favorito
-  favoritos.push({ id, titulo, descripcion, texto });
+  favoritos.push({ id, title, description, prompt, category, subcategory });
   localStorage.setItem('favoritos', JSON.stringify(favoritos));
-
-  mostrarMensaje("✅ Prompt agregado a favoritos.");
+  mostrarMensaje("✅ Prompt agregado a Favoritos");
 }
 
-
-
 function mostrarMensaje(texto) {
-  const mensaje = document.createElement("div");
-  mensaje.textContent = texto;
-  mensaje.style.position = "fixed";
-  mensaje.style.top = "50%";
-  mensaje.style.left = "50%";
-  mensaje.style.transform = "translate(-50%, -50%)";
-  mensaje.style.background = "#333";
-  mensaje.style.color = "#fff";
-  mensaje.style.padding = "12px 20px";
-  mensaje.style.borderRadius = "10px";
-  mensaje.style.zIndex = "9999";
-  mensaje.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
-  mensaje.style.fontSize = "16px";
-
-  document.body.appendChild(mensaje);
-
-  setTimeout(() => {
-    mensaje.remove();
-  }, 2500); // El mensaje desaparece en 2.5 segundos
+  const msg = document.createElement('div');
+  msg.textContent = texto;
+  msg.style.position = 'fixed';
+  msg.style.top = '50%';
+  msg.style.left = '50%';
+  msg.style.transform = 'translate(-50%, -50%)';
+  msg.style.background = '#333';
+  msg.style.color = '#fff';
+  msg.style.padding = '15px 25px';
+  msg.style.borderRadius = '8px';
+  msg.style.zIndex = 9999;
+  msg.style.boxShadow = '0 4px 8px rgba(0,0,0,0.3)';
+  document.body.appendChild(msg);
+  setTimeout(() => msg.remove(), 2000);
 }
 
 
