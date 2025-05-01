@@ -502,6 +502,9 @@ function copyToClipboard(text) {
 }
 
 
+    fetchCSV();
+
+
 function agregarAFavoritos(id, titulo, descripcion, texto) {
   const favoritos = JSON.parse(localStorage.getItem('favoritos') || '[]');
 
@@ -519,7 +522,8 @@ function agregarAFavoritos(id, titulo, descripcion, texto) {
 
 
 
-    fetchCSV();
+
+    
   </script>
 </body>
 </html>
