@@ -260,11 +260,6 @@ function showPrompt(prompt) {
     <pre style="white-space: pre-wrap; font-family: inherit;">${promptText}</pre>
   `;
 
-    // ✅ BOTÓN DE FAVORITOS -->
-   <button onclick="agregarAFavoritos('${prompt.id}', \`${prompt.title}\`, \`${prompt.description || ''}\`, \`${promptText}\`)">⭐ Agregar a Favoritos</button>
-  `;
-
-  
   // Inputs cortos entre [ ]
   const shortMatches = promptText.match(/\[(.*?)\]/g) || [];
   shortMatches.forEach(match => {
@@ -503,27 +498,6 @@ function copyToClipboard(text) {
 
 
     fetchCSV();
-
-
-function agregarAFavoritos(id, titulo, descripcion, texto) {
-  const favoritos = JSON.parse(localStorage.getItem('favoritos') || '[]');
-
-  // Verifica si ya está agregado
-  const existe = favoritos.some(fav => fav.id === id);
-  if (existe) {
-    alert('✅ Ya agregaste este prompt a tus favoritos.');
-    return;
-  }
-
-  favoritos.push({ id, titulo, descripcion, texto });
-  localStorage.setItem('favoritos', JSON.stringify(favoritos));
-  alert('⭐ Prompt agregado a favoritos.');
-}
-
-
-
-
-    
   </script>
 </body>
 </html>
