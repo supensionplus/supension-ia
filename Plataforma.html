@@ -504,6 +504,20 @@ function copyToClipboard(text) {
 }
 
 
+function agregarAFavoritos(id, titulo, descripcion, texto) {
+  const favoritos = JSON.parse(localStorage.getItem('favoritos') || '[]');
+
+  // Verifica si ya está agregado
+  const existe = favoritos.some(fav => fav.id === id);
+  if (existe) {
+    alert('✅ Ya agregaste este prompt a tus favoritos.');
+    return;
+  }
+
+  favoritos.push({ id, titulo, descripcion, texto });
+  localStorage.setItem('favoritos', JSON.stringify(favoritos));
+  alert('⭐ Prompt agregado a favoritos.');
+}
 
 
 
