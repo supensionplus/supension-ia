@@ -257,7 +257,6 @@ function renderTitles(category, subcategory) {
 
 
 function showPrompt(prompt) {
-  // Guarda el contexto para volver luego
   window.lastCategory = prompt.category;
   window.lastSubcategory = prompt.subcategory;
   window.currentPromptTemplate = prompt.prompt;
@@ -265,19 +264,13 @@ function showPrompt(prompt) {
   const content = document.getElementById('content');
   const promptText = prompt.prompt;
 
-  // Asegurarse de que tenga un ID único
-  const promptId = prompt.id || `${prompt.category}-${prompt.subcategory}-${prompt.title}`.replace(/\s+/g, '_');
-
-  // Encabezado, botón regresar, texto del prompt y botón de favoritos
   content.innerHTML = `
-  <h2>${prompt.title}</h2>
-  <button class="back-button" onclick="renderTitles('${prompt.category}', '${prompt.subcategory}')">← Regresar</button>
-  <pre style="white-space: pre-wrap; font-family: inherit;">${promptText}</pre>
-  <button onclick="agregarAFavoritos('${prompt.id}', \`${prompt.title}\`, \`${prompt.description || ''}\`, \`${promptText}\`, '${prompt.category}', '${prompt.subcategory}')">⭐ Agregar a Favoritos</button>
-`;
+    <h2>${prompt.title}</h2>
+    <button class="back-button" onclick="renderTitles('${prompt.category}', '${prompt.subcategory}')">← Regresar</button>
+    <pre style="white-space: pre-wrap; font-family: inherit;">${promptText}</pre>
+    <button onclick="agregarAFavoritosPorId('${prompt.id}')">⭐ Agregar a Favoritos</button>
+  `;
 
-
-  // Inputs cortos entre [ ]
   const shortMatches = promptText.match(/\[(.*?)\]/g) || [];
   shortMatches.forEach(match => {
     const field = match.replace(/[\[\]]/g, '');
@@ -289,7 +282,6 @@ function showPrompt(prompt) {
     `;
   });
 
-  // Inputs largos entre { }
   const longMatches = promptText.match(/\{(.*?)\}/g) || [];
   longMatches.forEach(match => {
     const field = match.replace(/[{}]/g, '');
@@ -301,11 +293,11 @@ function showPrompt(prompt) {
     `;
   });
 
-  // Botón para generar el prompt
   content.innerHTML += `
     <button onclick="generatePrompt()">Generar Prompt</button>
   `;
 }
+
 
 
 
@@ -608,6 +600,73 @@ function ejecutarFavorito(fav) {
   });
 }
 
+
+    function agregarAFavoritosPorId(promptId) {
+  const prompt = prompts.find(p => p.id === promptId);
+  if (!prompt) {
+    alert("Error: no se encontró el prompt.");
+    return;
+  }
+
+  const usuario = localStorage.getItem("usuario");
+  if (!usuario) {
+    alert("No hay un usuario activo.");
+    return;
+  }
+
+  const storageKey = `favoritos_${usuario}`;
+  const favoritos = JSON.parse(localStorage.getItem(storageKey)) || [];
+
+  const yaExiste = favoritos.some(f => f.id === promptId);
+  if (yaExiste) {
+    mostrarMensajeFlotante("⚠️ Este prompt ya está en tus favoritos.");
+    return;
+  }
+
+  favoritos.push({
+    id: promptId,
+    title: prompt.title,
+    description: prompt.description || '',
+    prompt: prompt.prompt,
+    category: prompt.category,
+    subcategory: prompt.subcategory
+  });
+
+  localStorage.setItem(storageKey, JSON.stringify(favoritos));
+  mostrarMensajeFlotante("✅ Prompt agregado a favoritos.");
+}
+
+
+
+function mostrarMensajeFlotante(mensaje) {
+  const mensajeDiv = document.createElement('div');
+  mensajeDiv.textContent = mensaje;
+  mensajeDiv.style.position = 'fixed';
+  mensajeDiv.style.top = '20px';
+  mensajeDiv.style.left = '50%';
+  mensajeDiv.style.transform = 'translateX(-50%)';
+  mensajeDiv.style.background = '#333';
+  mensajeDiv.style.color = 'white';
+  mensajeDiv.style.padding = '10px 20px';
+  mensajeDiv.style.borderRadius = '8px';
+  mensajeDiv.style.zIndex = 1000;
+  mensajeDiv.style.boxShadow = '0 2px 6px rgba(0,0,0,0.3)';
+  document.body.appendChild(mensajeDiv);
+
+  setTimeout(() => {
+    mensajeDiv.remove();
+  }, 2500);
+}
+
+
+
+    
+
+
+
+
+
+    
     
     fetchCSV();
   </script>
