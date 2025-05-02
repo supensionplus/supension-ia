@@ -548,7 +548,8 @@ function mostrarMensaje(texto) {
 
 function mostrarFavoritos() {
   const content = document.getElementById('content');
-  const favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
+  const referencia = localStorage.getItem('referencia');
+  const favoritos = JSON.parse(localStorage.getItem(`favoritos_${referencia}`)) || [];
 
   if (favoritos.length === 0) {
     content.innerHTML = '<p>No hay prompts guardados como favoritos.</p>';
