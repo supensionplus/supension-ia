@@ -549,6 +549,11 @@ function mostrarMensaje(texto) {
 function mostrarFavoritos() {
   const content = document.getElementById('content');
   const referencia = localStorage.getItem('referencia');
+  if (!referencia) {
+    content.innerHTML = '<p>⚠️ No hay sesión activa.</p>';
+    return;
+  }
+
   const storageKey = `favoritos_${referencia}`;
   const favoritos = JSON.parse(localStorage.getItem(storageKey)) || [];
 
@@ -558,18 +563,20 @@ function mostrarFavoritos() {
   }
 
   let html = `
-    <h2 style="margin-bottom: 1rem;">📌 Tus Favoritos</h2>
-    <button onclick="eliminarFavoritosSeleccionados()" style="margin-bottom: 15px; padding: 8px 12px; border-radius: 6px; background-color: #e74c3c; color: white; border: none; cursor: pointer;">🗑️ Eliminar seleccionados</button>
-    <div style="overflow-x:auto;">
-    <table style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
+    <h2>📌 Tus Favoritos</h2>
+    <div style="margin-bottom: 10px;">
+      <button onclick="eliminarFavoritosSeleccionados()" style="padding: 8px 12px; border-radius: 6px; background-color: #d9534f; color: white; border: none; cursor: pointer;">🗑️ Borrar seleccionados</button>
+      <button onclick="eliminarTodosLosFavoritos()" style="margin-left: 10px; padding: 8px 12px; border-radius: 6px; background-color: #999; color: white; border: none; cursor: pointer;">🧹 Borrar todos</button>
+    </div>
+    <table style="width:100%; border-collapse: collapse;">
       <thead>
-        <tr style="background-color: #f4f4f4;">
-          <th style="padding: 10px; border: 1px solid #ccc; border-radius: 8px 0 0 0;">✔</th>
-          <th style="text-align:left; padding: 10px; border: 1px solid #ccc;">Categoría</th>
-          <th style="text-align:left; padding: 10px; border: 1px solid #ccc;">Subcategoría</th>
-          <th style="text-align:left; padding: 10px; border: 1px solid #ccc;">Título</th>
-          <th style="text-align:left; padding: 10px; border: 1px solid #ccc;">Extracto</th>
-          <th style="padding: 10px; border: 1px solid #ccc; border-radius: 0 8px 0 0;">Acciones</th>
+        <tr style="background-color:#f0f0f0;">
+          <th></th>
+          <th title="Área temática general del prompt">Categoría 🛈</th>
+          <th title="Tema específico dentro de la categoría">Subcategoría 🛈</th>
+          <th title="Nombre identificador del prompt">Título 🛈</th>
+          <th title="Primeras líneas del prompt">Extracto 🛈</th>
+          <th>Acción</th>
         </tr>
       </thead>
       <tbody>
@@ -583,20 +590,20 @@ function mostrarFavoritos() {
       .replace(/"/g, '&quot;');
 
     html += `
-      <tr style="background-color: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-        <td style="padding: 10px; border: 1px solid #ddd; text-align: center;"><input type="checkbox" class="favorito-checkbox" data-index="${index}"></td>
-        <td style="padding: 10px; border: 1px solid #ddd;">${fav.category}</td>
-        <td style="padding: 10px; border: 1px solid #ddd;">${fav.subcategory}</td>
-        <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">${fav.title}</td>
-        <td style="padding: 10px; border: 1px solid #ddd;">${extracto}</td>
-        <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">
-          <button onclick='ejecutarFavorito(${JSON.stringify(fav).replace(/'/g, "\\'")})' style="padding: 6px 10px; border-radius: 5px; border: none; background-color: #3498db; color: white; cursor: pointer;">▶ Ejecutar</button>
+      <tr style="border-bottom:1px solid #ddd;">
+        <td><input type="checkbox" class="chk-fav" data-id="${fav.id}"></td>
+        <td style="padding:6px;">${fav.category}</td>
+        <td style="padding:6px;">${fav.subcategory}</td>
+        <td style="padding:6px;">${fav.title}</td>
+        <td style="padding:6px;">${extracto}</td>
+        <td style="padding:6px;">
+          <button onclick='ejecutarFavorito(${JSON.stringify(fav).replace(/'/g, "\\'")})' style="padding:4px 8px; border:none; background:#007bff; color:white; border-radius:4px;">Ejecutar</button>
         </td>
       </tr>
     `;
   });
 
-  html += `</tbody></table></div>`;
+  html += `</tbody></table>`;
   content.innerHTML = html;
 }
 
@@ -651,6 +658,22 @@ function ejecutarFavorito(fav) {
 }
 
 
+
+function eliminarTodosLosFavoritos() {
+  const referencia = localStorage.getItem('referencia');
+  if (!referencia) return;
+
+  if (confirm("¿Estás seguro de que deseas eliminar TODOS tus prompts favoritos? Esta acción no se puede deshacer.")) {
+    localStorage.removeItem(`favoritos_${referencia}`);
+    mostrarMensajeFlotante("🗑️ Todos los favoritos han sido eliminados.");
+    mostrarFavoritos(); // Refresca la vista
+  }
+}
+
+
+
+
+    
 
 function mostrarMensajeFlotante(mensaje) {
   const mensajeDiv = document.createElement('div');
