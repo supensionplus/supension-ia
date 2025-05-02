@@ -157,15 +157,17 @@
     function logout() {
   if (confirm("¿Estás seguro de que deseas cerrar sesión?")) {
     const referencia = localStorage.getItem('referencia');
-    // Conserva los favoritos del usuario actual
+    // Guarda los favoritos del usuario antes de limpiar
     const favoritos = localStorage.getItem(`favoritos_${referencia}`);
     localStorage.clear();
+    // Restaura los favoritos del usuario
     if (favoritos) {
       localStorage.setItem(`favoritos_${referencia}`, favoritos);
     }
-    location.reload();
+    window.location.href = "index.html"; // Redirige al formulario de acceso
   }
 }
+
 
 
 
