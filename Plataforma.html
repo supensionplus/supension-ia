@@ -698,6 +698,27 @@ function mostrarMensajeFlotante(mensaje) {
 
 
     
+function eliminarFavoritosSeleccionados() {
+  const referencia = localStorage.getItem('referencia');
+  if (!referencia) return;
+
+  const storageKey = `favoritos_${referencia}`;
+  const favoritos = JSON.parse(localStorage.getItem(storageKey)) || [];
+
+  const checkboxes = document.querySelectorAll('.chk-fav:checked');
+  const idsAEliminar = Array.from(checkboxes).map(cb => cb.dataset.id);
+
+  if (idsAEliminar.length === 0) {
+    alert("No has seleccionado ningún prompt para eliminar.");
+    return;
+  }
+
+  const nuevosFavoritos = favoritos.filter(fav => !idsAEliminar.includes(fav.id));
+
+  localStorage.setItem(storageKey, JSON.stringify(nuevosFavoritos));
+  mostrarMensajeFlotante(`🗑️ Se eliminaron ${idsAEliminar.length} favorito(s).`);
+  mostrarFavoritos(); // Recarga la tabla actualizada
+}
 
 
 
