@@ -610,13 +610,13 @@ function ejecutarFavorito(fav) {
     return;
   }
 
-  const usuario = localStorage.getItem("usuario");
-  if (!usuario) {
-    alert("No hay un usuario activo.");
+  const referencia = localStorage.getItem("referencia");
+  if (!referencia) {
+    alert("No hay una referencia activa.");
     return;
   }
 
-  const storageKey = `favoritos_${usuario}`;
+  const storageKey = `favoritos_${referencia}`;
   const favoritos = JSON.parse(localStorage.getItem(storageKey)) || [];
 
   const yaExiste = favoritos.some(f => f.id === promptId);
