@@ -549,7 +549,8 @@ function mostrarMensaje(texto) {
 function mostrarFavoritos() {
   const content = document.getElementById('content');
   const referencia = localStorage.getItem('referencia');
-  const favoritos = JSON.parse(localStorage.getItem(`favoritos_${referencia}`)) || [];
+  const storageKey = `favoritos_${referencia}`;
+  const favoritos = JSON.parse(localStorage.getItem(storageKey)) || [];
 
   if (favoritos.length === 0) {
     content.innerHTML = '<p>No hay prompts guardados como favoritos.</p>';
@@ -558,19 +559,22 @@ function mostrarFavoritos() {
 
   let html = `
     <h2>📌 Tus Favoritos</h2>
+    <button onclick="eliminarFavoritosSeleccionados()" style="margin-bottom:10px;">🗑️ Eliminar seleccionados</button>
     <table style="width:100%; border-collapse: collapse;">
       <thead>
         <tr>
+          <th></th>
           <th style="text-align:left; border-bottom:1px solid #ccc;">Categoría</th>
           <th style="text-align:left; border-bottom:1px solid #ccc;">Subcategoría</th>
           <th style="text-align:left; border-bottom:1px solid #ccc;">Título</th>
           <th style="text-align:left; border-bottom:1px solid #ccc;">Extracto</th>
+          <th style="text-align:left; border-bottom:1px solid #ccc;">Acciones</th>
         </tr>
       </thead>
       <tbody>
   `;
 
-  favoritos.forEach(fav => {
+  favoritos.forEach((fav, index) => {
     const extracto = fav.prompt
       .split('\n')
       .slice(0, 5)
@@ -578,11 +582,13 @@ function mostrarFavoritos() {
       .replace(/"/g, '&quot;');
 
     html += `
-      <tr style="cursor:pointer;" onclick='ejecutarFavorito(${JSON.stringify(fav).replace(/'/g, "\\'")})'>
+      <tr>
+        <td><input type="checkbox" class="favorito-checkbox" data-index="${index}"></td>
         <td>${fav.category}</td>
         <td>${fav.subcategory}</td>
         <td>${fav.title}</td>
         <td>${extracto}</td>
+        <td><button onclick='ejecutarFavorito(${JSON.stringify(fav).replace(/'/g, "\\'")})'>▶ Ejecutar</button></td>
       </tr>
     `;
   });
@@ -590,6 +596,7 @@ function mostrarFavoritos() {
   html += `</tbody></table>`;
   content.innerHTML = html;
 }
+
 
 // Ejecuta el favorito como si se hubiera abierto desde la lista
 function ejecutarFavorito(fav) {
