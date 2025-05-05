@@ -11,7 +11,7 @@
       padding: 0;
     }
 
-    .boton-lateral {
+    .sidebar-button {
       background-color: #005A9E;
       color: white;
       border: none;
@@ -19,10 +19,9 @@
       border-radius: 6px;
       font-size: 14px;
       cursor: pointer;
-      transition: background-color 0.3s;
     }
 
-    .boton-lateral:hover {
+    .sidebar-button:hover {
       background-color: #0078D4;
     }
 
@@ -30,25 +29,10 @@
       padding: 20px;
     }
 
-    #misPromptsVista ul {
-      list-style-type: none;
-      padding-left: 0;
-    }
-
-    #misPromptsVista li {
-      margin: 6px 0;
-    }
-
-    #misPromptsVista li button {
-      margin-left: 10px;
-      font-size: 12px;
-    }
-
-    .botonera {
+    #misPromptsMenu {
       display: flex;
-      justify-content: flex-start;
-      gap: 10px;
       flex-wrap: wrap;
+      gap: 10px;
       margin-bottom: 20px;
     }
   </style>
@@ -57,89 +41,17 @@
   <div id="misPromptsContainer">
     <h2 style="font-size: 24px; margin-bottom: 20px;">Mis Prompts</h2>
 
-    <div class="botonera">
-      <button class="boton-lateral" onclick="mostrarVista('categorias')">Categorías</button>
-      <button class="boton-lateral" onclick="mostrarVista('subcategorias')">Subcategorías</button>
-      <button class="boton-lateral" onclick="mostrarVista('prompts')">Prompts</button>
-      <button class="boton-lateral" onclick="exportarDatos()">Exportar</button>
-      <button class="boton-lateral" onclick="importarDatos()">Importar</button>
+    <div id="misPromptsMenu">
+      <button class="sidebar-button">Categorías</button>
+      <button class="sidebar-button">Subcategorías</button>
+      <button class="sidebar-button">Prompts</button>
+      <button class="sidebar-button">Exportar</button>
+      <button class="sidebar-button">Importar</button>
     </div>
 
     <div id="misPromptsVista">
       <p>Selecciona una opción del menú para gestionar tus prompts personalizados.</p>
     </div>
   </div>
-
-  <script>
-    let categorias = [];
-    let subcategorias = [];
-    let prompts = [];
-
-    function mostrarVista(vista) {
-      const container = document.getElementById('misPromptsVista');
-      if (vista === 'categorias') {
-        container.innerHTML = `
-          <h3>Categorías</h3>
-          <button class="boton-lateral" onclick="agregarCategoria()">Agregar Categoría</button>
-          <ul id="listaCategorias"></ul>
-        `;
-        renderCategorias();
-      } else if (vista === 'subcategorias') {
-        container.innerHTML = `<h3>Subcategorías</h3><p>(Próximamente...)</p>`;
-      } else if (vista === 'prompts') {
-        container.innerHTML = `<h3>Prompts</h3><p>(Próximamente...)</p>`;
-      }
-    }
-
-    function renderCategorias() {
-      const ul = document.getElementById('listaCategorias');
-      ul.innerHTML = '';
-      categorias.forEach((cat, index) => {
-        const li = document.createElement('li');
-        li.textContent = cat;
-        li.innerHTML += ` 
-          <button onclick="editarCategoria(${index})">Editar</button>
-          <button onclick="borrarCategoria(${index})">Borrar</button>`;
-        ul.appendChild(li);
-      });
-    }
-
-    function agregarCategoria() {
-      const nombre = prompt("Ingrese el nombre de la categoría:");
-      if (!nombre) return;
-      if (categorias.includes(nombre)) {
-        alert("Ya existe una categoría con ese nombre.");
-        return;
-      }
-      categorias.push(nombre);
-      renderCategorias();
-    }
-
-    function editarCategoria(index) {
-      const nuevoNombre = prompt("Editar nombre de la categoría:", categorias[index]);
-      if (!nuevoNombre || categorias.includes(nuevoNombre)) {
-        alert("Nombre inválido o duplicado.");
-        return;
-      }
-      categorias[index] = nuevoNombre;
-      renderCategorias();
-    }
-
-    function borrarCategoria(index) {
-      if (confirm("¿Está seguro de borrar esta categoría?")) {
-        categorias.splice(index, 1);
-        renderCategorias();
-      }
-    }
-
-    function exportarDatos() {
-      alert("Función de exportar aún no implementada.");
-    }
-
-    function importarDatos() {
-      alert("Función de importar aún no implementada.");
-    }
-  </script>
 </body>
 </html>
-
