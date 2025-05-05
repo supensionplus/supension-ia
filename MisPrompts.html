@@ -1,1 +1,79 @@
+<!-- Módulo inicial de "Mis Prompts" -->
+<div id="misPromptsContainer" style="display:none; padding: 20px;">
+  <h2 style="margin-bottom: 20px;">Mis Prompts</h2>
+
+  <!-- Menú superior con botones principales -->
+  <div id="misPromptsMenu" style="margin-bottom: 20px;">
+    <button onclick="mostrarVista('categorias')">Categorías</button>
+    <button onclick="mostrarVista('subcategorias')">Subcategorías</button>
+    <button onclick="mostrarVista('prompts')">Prompts</button>
+    <button onclick="exportarMisPrompts()">Exportar</button>
+    <button onclick="importarMisPrompts()">Importar</button>
+  </div>
+
+  <!-- Contenedores dinámicos -->
+  <div id="vistaCategorias" style="display:none;"></div>
+  <div id="vistaSubcategorias" style="display:none;"></div>
+  <div id="vistaPrompts" style="display:none;"></div>
+
+  <!-- Input para importar CSV (inicialmente oculto) -->
+  <input type="file" id="importFileInput" accept=".csv" style="display:none" onchange="procesarImportacion(event)">
+</div>
+
+<script>
+// Estructura básica de almacenamiento local por usuario
+function obtenerMisPrompts() {
+  const usuario = localStorage.getItem("usuarioActual") || "anonimo";
+  const data = localStorage.getItem("misPrompts_" + usuario);
+  return data ? JSON.parse(data) : { categorias: [] };
+}
+
+function guardarMisPrompts(data) {
+  const usuario = localStorage.getItem("usuarioActual") || "anonimo";
+  localStorage.setItem("misPrompts_" + usuario, JSON.stringify(data));
+}
+
+// Navegación de vistas
+function mostrarVista(vista) {
+  document.getElementById("vistaCategorias").style.display = vista === "categorias" ? "block" : "none";
+  document.getElementById("vistaSubcategorias").style.display = vista === "subcategorias" ? "block" : "none";
+  document.getElementById("vistaPrompts").style.display = vista === "prompts" ? "block" : "none";
+  if (vista === "categorias") renderizarCategorias();
+  if (vista === "subcategorias") renderizarSubcategorias();
+  if (vista === "prompts") renderizarPrompts();
+}
+
+// Exportar e importar (sólo estructura, implementación luego)
+function exportarMisPrompts() {
+  const datos = obtenerMisPrompts();
+  const contenido = JSON.stringify(datos);
+  const blob = new Blob([contenido], { type: 'application/json' });
+  const enlace = document.createElement('a');
+  enlace.href = URL.createObjectURL(blob);
+  enlace.download = 'mis_prompts.json';
+  enlace.click();
+}
+
+function importarMisPrompts() {
+  if (confirm("¿Deseas importar un archivo y reemplazar tus datos actuales?")) {
+    document.getElementById("importFileInput").click();
+  }
+}
+
+function procesarImportacion(event) {
+  const archivo = event.target.files[0];
+  if (!archivo) return;
+  const lector = new FileReader();
+  lector.onload = function(e) {
+    try {
+      const datos = JSON.parse(e.target.result);
+      guardarMisPrompts(datos);
+      alert("Importación exitosa.");
+    } catch (err) {
+      alert("Error al importar el archivo. Asegúrate de que sea válido.");
+    }
+  };
+  lector.readAsText(archivo);
+}
+</script>
 
