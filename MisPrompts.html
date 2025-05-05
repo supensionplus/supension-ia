@@ -12,7 +12,7 @@
     }
 
     .boton-lateral {
-      background-color: #005A9E;
+      background-color: #005A9E; /* Color del sidebar */
       color: white;
       border: none;
       padding: 8px 14px;
@@ -49,7 +49,7 @@
     <h2 style="font-size: 24px; margin-bottom: 20px;">Mis Prompts</h2>
 
     <div style="display: flex; justify-content: start; gap: 10px; margin-bottom: 20px;">
-      <button class="boton-lateral">Categorías</button>
+      <button class="boton-lateral" onclick="mostrarCategorias()">Categorías</button>
       <button class="boton-lateral">Subcategorías</button>
       <button class="boton-lateral">Prompts</button>
       <button class="boton-lateral">Exportar</button>
@@ -60,5 +60,61 @@
       <p>Selecciona una opción del menú para gestionar tus prompts personalizados.</p>
     </div>
   </div>
+
+  <script>
+    let categorias = [];
+
+    function mostrarCategorias() {
+      const container = document.getElementById('misPromptsVista');
+      container.innerHTML = `
+        <h3>Categorías</h3>
+        <button class="boton-lateral" onclick="agregarCategoria()">Agregar Categoría</button>
+        <ul id="listaCategorias"></ul>
+      `;
+      renderCategorias();
+    }
+
+    function renderCategorias() {
+      const ul = document.getElementById('listaCategorias');
+      ul.innerHTML = '';
+      categorias.forEach((cat, index) => {
+        const li = document.createElement('li');
+        li.textContent = cat;
+        li.innerHTML += `
+          <button class="boton-lateral" onclick="editarCategoria(${index})">Editar</button>
+          <button class="boton-lateral" onclick="borrarCategoria(${index})">Borrar</button>
+        `;
+        ul.appendChild(li);
+      });
+    }
+
+    function agregarCategoria() {
+      const nombre = prompt("Ingrese el nombre de la categoría:");
+      if (!nombre) return;
+      if (categorias.includes(nombre)) {
+        alert("Ya existe una categoría con ese nombre.");
+        return;
+      }
+      categorias.push(nombre);
+      renderCategorias();
+    }
+
+    function editarCategoria(index) {
+      const nuevoNombre = prompt("Editar nombre de la categoría:", categorias[index]);
+      if (!nuevoNombre || categorias.includes(nuevoNombre)) {
+        alert("Nombre inválido o duplicado.");
+        return;
+      }
+      categorias[index] = nuevoNombre;
+      renderCategorias();
+    }
+
+    function borrarCategoria(index) {
+      if (confirm("¿Está seguro de borrar esta categoría?")) {
+        categorias.splice(index, 1);
+        renderCategorias();
+      }
+    }
+  </script>
 </body>
 </html>
