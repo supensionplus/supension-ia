@@ -1,89 +1,35 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mis Prompts - SUPENSION IA</title>
-  <link rel="stylesheet" href="estilos.css"> <!-- Asegúrate de usar el mismo archivo de estilos que plataforma.html -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      background-color: #f4f4f4;
-      display: flex;
-    }
-    .sidebar {
-      width: 220px;
-      background-color: #2c3e50;
-      padding: 20px;
-      color: white;
-      height: 100vh;
-      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-    }
-    .sidebar h2 {
-      margin-top: 0;
-      font-size: 1.4em;
-      margin-bottom: 20px;
-    }
-    .boton-menu {
-      display: block;
-      background-color: #34495e;
-      border: none;
-      color: white;
-      padding: 10px 15px;
-      text-align: left;
-      margin-bottom: 10px;
-      width: 100%;
-      cursor: pointer;
-      border-radius: 5px;
-      font-size: 0.95em;
-    }
-    .boton-menu:hover {
-      background-color: #3b5771;
-    }
-    .contenido {
-      flex-grow: 1;
-      padding: 30px;
-    }
-    .seccion {
-      background-color: white;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    .titulo-seccion {
-      font-size: 1.2em;
-      margin-bottom: 10px;
-      font-weight: bold;
-    }
-    .subtitulo-seccion {
-      font-size: 1em;
-      margin: 15px 0 10px;
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
-  <div class="sidebar">
-    <h2>SUPENSION IA</h2>
-    <button class="boton-menu" onclick="window.location.href='plataforma.html'">
-      <i class="fas fa-home"></i> Inicio
-    </button>
-    <button class="boton-menu" onclick="window.location.href='MisPrompts.html'">
-      <i class="fas fa-user-edit"></i> Mis Prompts
-    </button>
-    <!-- Aquí podrías incluir más botones si lo deseas -->
-  </div>
+<div style="text-align: center; margin-bottom: 20px;">
+  <h2 style="color: #2c3e50; font-weight: bold;">Mis Prompts</h2>
+</div>
 
-  <div class="contenido">
-    <div class="seccion">
-      <div class="titulo-seccion">Gestión de Mis Prompts</div>
-      <p>Desde aquí podrás agregar, editar, borrar, importar o exportar tus prompts personalizados.</p>
+<div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;">
+  <button class="boton-lateral" onclick="mostrarCategorias()">Categorías</button>
+  <button class="boton-lateral" onclick="mostrarSubcategorias()">Subcategorías</button>
+  <button class="boton-lateral" onclick="mostrarPrompts()">Prompts</button>
+  <button class="boton-lateral" onclick="exportarDatos()">Exportar</button>
+  <button class="boton-lateral" onclick="importarDatos()">Importar</button>
+</div>
 
-      <!-- Aquí irán los menús de Categorías, Subcategorías, Prompts, Exportar, Importar -->
-      <!-- Los agregaremos dinámicamente más adelante -->
-    </div>
-  </div>
-</body>
-</html>
+<div id="contenidoMisPrompts" style="padding: 10px;"></div>
+
+<script>
+  function mostrarCategorias() {
+    document.getElementById('contenidoMisPrompts').innerHTML = '<p>Aquí se mostrarán las categorías.</p>';
+  }
+
+  function mostrarSubcategorias() {
+    document.getElementById('contenidoMisPrompts').innerHTML = '<p>Aquí se mostrarán las subcategorías.</p>';
+  }
+
+  function mostrarPrompts() {
+    document.getElementById('contenidoMisPrompts').innerHTML = '<p>Aquí se mostrarán los prompts.</p>';
+  }
+
+  function exportarDatos() {
+    document.getElementById('contenidoMisPrompts').innerHTML = '<p>Funcionalidad de exportar.</p>';
+  }
+
+  function importarDatos() {
+    document.getElementById('contenidoMisPrompts').innerHTML = '<p>Funcionalidad de importar.</p>';
+  }
+</script>
