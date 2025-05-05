@@ -55,13 +55,13 @@
   <div id="misPromptsContainer">
     <h2 style="font-size: 24px; margin-bottom: 20px;">Mis Prompts</h2>
 
-    <div id="misPromptsMenu">
-      <button class="sidebar-button" onclick="mostrarVista('categorias')">Categorías</button>
-      <button class="sidebar-button" onclick="mostrarVista('subcategorias')">Subcategorías</button>
-      <button class="sidebar-button" onclick="mostrarVista('prompts')">Prompts</button>
-      <button class="sidebar-button" onclick="exportarDatos()">Exportar</button>
-      <button class="sidebar-button" onclick="importarDatos()">Importar</button>
-    </div>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
+  <button class="boton-lateral" onclick="mostrarCategorias()">Categorías</button>
+  <button class="boton-lateral" onclick="mostrarSubcategorias()">Subcategorías</button>
+  <button class="boton-lateral" onclick="mostrarPrompts()">Prompts</button>
+  <button class="boton-lateral" onclick="exportarDatos()">Exportar</button>
+  <button class="boton-lateral" onclick="importarDatos()">Importar</button>
+</div>
 
     <div id="misPromptsVista">
       <p>Selecciona una opción del menú para gestionar tus prompts personalizados.</p>
