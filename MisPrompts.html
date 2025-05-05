@@ -11,7 +11,7 @@
       padding: 0;
     }
 
-    .sidebar-button {
+    .boton-lateral {
       background-color: #005A9E;
       color: white;
       border: none;
@@ -21,7 +21,7 @@
       cursor: pointer;
     }
 
-    .sidebar-button:hover {
+    .boton-lateral:hover {
       background-color: #0078D4;
     }
 
@@ -29,11 +29,18 @@
       padding: 20px;
     }
 
-    #misPromptsMenu {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 20px;
+    #misPromptsVista ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+
+    #misPromptsVista li {
+      margin: 6px 0;
+    }
+
+    #misPromptsVista li button {
+      margin-left: 10px;
+      font-size: 12px;
     }
   </style>
 </head>
@@ -41,12 +48,12 @@
   <div id="misPromptsContainer">
     <h2 style="font-size: 24px; margin-bottom: 20px;">Mis Prompts</h2>
 
-    <div id="misPromptsMenu">
-      <button class="sidebar-button">Categorías</button>
-      <button class="sidebar-button">Subcategorías</button>
-      <button class="sidebar-button">Prompts</button>
-      <button class="sidebar-button">Exportar</button>
-      <button class="sidebar-button">Importar</button>
+    <div style="display: flex; justify-content: start; gap: 10px; margin-bottom: 20px;">
+      <button class="boton-lateral">Categorías</button>
+      <button class="boton-lateral">Subcategorías</button>
+      <button class="boton-lateral">Prompts</button>
+      <button class="boton-lateral">Exportar</button>
+      <button class="boton-lateral">Importar</button>
     </div>
 
     <div id="misPromptsVista">
