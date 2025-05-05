@@ -1,79 +1,125 @@
-<!-- Módulo inicial de "Mis Prompts" -->
-<div id="misPromptsContainer" style="display:none; padding: 20px;">
-  <h2 style="margin-bottom: 20px;">Mis Prompts</h2>
-
-  <!-- Menú superior con botones principales -->
-  <div id="misPromptsMenu" style="margin-bottom: 20px;">
-    <button onclick="mostrarVista('categorias')">Categorías</button>
-    <button onclick="mostrarVista('subcategorias')">Subcategorías</button>
-    <button onclick="mostrarVista('prompts')">Prompts</button>
-    <button onclick="exportarMisPrompts()">Exportar</button>
-    <button onclick="importarMisPrompts()">Importar</button>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis Prompts</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #333;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    #menu {
+      display: flex;
+      gap: 0.5rem;
+      padding: 1rem;
+      background-color: #eee;
+      justify-content: center;
+    }
+    #menu button {
+      padding: 0.5rem 1rem;
+      border: none;
+      background-color: #444;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #menu button:hover {
+      background-color: #666;
+    }
+    #contenido {
+      padding: 1rem;
+    }
+    .seccion {
+      display: none;
+    }
+    .seccion.activa {
+      display: block;
+    }
+    .resultado {
+      margin-top: 2rem;
+      padding: 1rem;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .boton-regresar {
+      margin-top: 1rem;
+      background-color: #444;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Mis Prompts</h1>
+  </header>
+  <div id="menu">
+    <button onclick="mostrarSeccion('categorias')">Categorías</button>
+    <button onclick="mostrarSeccion('subcategorias')">Subcategorías</button>
+    <button onclick="mostrarSeccion('prompts')">Prompts</button>
+    <button onclick="exportarDatos()">Exportar</button>
+    <button onclick="importarDatos()">Importar</button>
   </div>
 
-  <!-- Contenedores dinámicos -->
-  <div id="vistaCategorias" style="display:none;"></div>
-  <div id="vistaSubcategorias" style="display:none;"></div>
-  <div id="vistaPrompts" style="display:none;"></div>
+  <div id="contenido">
+    <div id="categorias" class="seccion activa">
+      <!-- Aquí irá la gestión de categorías -->
+    </div>
+    <div id="subcategorias" class="seccion">
+      <!-- Aquí irá la gestión de subcategorías -->
+    </div>
+    <div id="prompts" class="seccion">
+      <!-- Aquí irá la gestión de prompts -->
+    </div>
 
-  <!-- Input para importar CSV (inicialmente oculto) -->
-  <input type="file" id="importFileInput" accept=".csv" style="display:none" onchange="procesarImportacion(event)">
-</div>
+    <div id="visorPrompt" class="resultado" style="display: none">
+      <h2 id="tituloPrompt"></h2>
+      <p id="contenidoPrompt"></p>
+      <button class="boton-regresar" onclick="regresarAMisPrompts()">Regresar</button>
+    </div>
+  </div>
 
-<script>
-// Estructura básica de almacenamiento local por usuario
-function obtenerMisPrompts() {
-  const usuario = localStorage.getItem("usuarioActual") || "anonimo";
-  const data = localStorage.getItem("misPrompts_" + usuario);
-  return data ? JSON.parse(data) : { categorias: [] };
-}
-
-function guardarMisPrompts(data) {
-  const usuario = localStorage.getItem("usuarioActual") || "anonimo";
-  localStorage.setItem("misPrompts_" + usuario, JSON.stringify(data));
-}
-
-// Navegación de vistas
-function mostrarVista(vista) {
-  document.getElementById("vistaCategorias").style.display = vista === "categorias" ? "block" : "none";
-  document.getElementById("vistaSubcategorias").style.display = vista === "subcategorias" ? "block" : "none";
-  document.getElementById("vistaPrompts").style.display = vista === "prompts" ? "block" : "none";
-  if (vista === "categorias") renderizarCategorias();
-  if (vista === "subcategorias") renderizarSubcategorias();
-  if (vista === "prompts") renderizarPrompts();
-}
-
-// Exportar e importar (sólo estructura, implementación luego)
-function exportarMisPrompts() {
-  const datos = obtenerMisPrompts();
-  const contenido = JSON.stringify(datos);
-  const blob = new Blob([contenido], { type: 'application/json' });
-  const enlace = document.createElement('a');
-  enlace.href = URL.createObjectURL(blob);
-  enlace.download = 'mis_prompts.json';
-  enlace.click();
-}
-
-function importarMisPrompts() {
-  if (confirm("¿Deseas importar un archivo y reemplazar tus datos actuales?")) {
-    document.getElementById("importFileInput").click();
-  }
-}
-
-function procesarImportacion(event) {
-  const archivo = event.target.files[0];
-  if (!archivo) return;
-  const lector = new FileReader();
-  lector.onload = function(e) {
-    try {
-      const datos = JSON.parse(e.target.result);
-      guardarMisPrompts(datos);
-      alert("Importación exitosa.");
-    } catch (err) {
-      alert("Error al importar el archivo. Asegúrate de que sea válido.");
+  <script>
+    function mostrarSeccion(id) {
+      document.querySelectorAll('.seccion').forEach(seccion => {
+        seccion.classList.remove('activa');
+      });
+      document.getElementById(id).classList.add('activa');
+      document.getElementById('visorPrompt').style.display = 'none';
     }
-  };
-  lector.readAsText(archivo);
-}
-</script>
 
+    function ejecutarPrompt(titulo, contenido) {
+      document.getElementById('tituloPrompt').innerText = titulo;
+      document.getElementById('contenidoPrompt').innerText = contenido;
+      document.getElementById('visorPrompt').style.display = 'block';
+      document.querySelectorAll('.seccion').forEach(seccion => seccion.classList.remove('activa'));
+    }
+
+    function regresarAMisPrompts() {
+      document.getElementById('visorPrompt').style.display = 'none';
+      mostrarSeccion('prompts');
+    }
+
+    function exportarDatos() {
+      alert('Exportar aún no implementado.');
+    }
+
+    function importarDatos() {
+      alert('Importar aún no implementado.');
+    }
+  </script>
+</body>
+</html>
