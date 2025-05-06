@@ -115,7 +115,7 @@
     <button onclick="showTags()">Ver Etiquetas</button>
     <button onclick="renderSearch()">Buscar Prompts</button>
     <button onclick="mostrarFavoritos()">Ver Favoritos</button> <!-- Nuevo botón -->
-    <button onclick="cargarMisPrompts()" class="boton-lateral">Mis Prompts</button>
+    <button onclick="cargarMisPrompts()">Mis Prompts</button>
 </button>
     <h2>Categorías</h2>
     <div id="category-list"></div>
@@ -723,23 +723,53 @@ function eliminarFavoritosSeleccionados() {
 }
 
 
+    
 
+
+
+
+  function cargarMisPrompts() {
+    const content = document.getElementById('content');
+    content.innerHTML = `
+      <div id="misPromptsContainer">
+        <h2 style="font-size: 24px; margin-bottom: 20px;">Mis Prompts</h2>
+
+        <div style="display: flex; justify-content: start; gap: 10px; margin-bottom: 20px;">
+          <button class="boton-lateral" onclick="mostrarCategorias()">Categorías</button>
+          <button class="boton-lateral" onclick="mostrarSubcategorias()">Subcategorías</button>
+          <button class="boton-lateral" onclick="mostrarPrompts()">Prompts</button>
+          <button class="boton-lateral" onclick="exportarDatos()">Exportar</button>
+          <button class="boton-lateral" onclick="importarDatos()">Importar</button>
+        </div>
+
+        <div id="misPromptsVista">
+          <p>Selecciona una opción del menú para gestionar tus prompts personalizados.</p>
+        </div>
+      </div>
+    `;
+  }
+
+  function mostrarCategorias() {
+    document.getElementById('misPromptsVista').innerHTML = `<h3>Categorías</h3><p>(Próximamente...)</p>`;
+  }
+
+  function mostrarSubcategorias() {
+    document.getElementById('misPromptsVista').innerHTML = `<h3>Subcategorías</h3><p>(Próximamente...)</p>`;
+  }
+
+  function mostrarPrompts() {
+    document.getElementById('misPromptsVista').innerHTML = `<h3>Prompts</h3><p>(Próximamente...)</p>`;
+  }
+
+  function exportarDatos() {
+    alert("Función de exportar aún no implementada.");
+  }
+
+  function importarDatos() {
+    alert("Función de importar aún no implementada.");
+  }
 
     
-    function cargarMisPrompts() {
-  fetch('MisPrompts.html')
-    .then(response => response.text())
-    .then(html => {
-      document.getElementById('content').innerHTML = html;
-    })
-    .catch(error => {
-      console.error('Error al cargar MisPrompts:', error);
-      document.getElementById('content').innerHTML = "<p>Error al cargar la sección.</p>";
-    });
-}
-
-
-
 
     
     
