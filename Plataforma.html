@@ -751,13 +751,14 @@ function eliminarFavoritosSeleccionados() {
 
   
 
+<script>
 function mostrarCategorias() {
   const content = document.getElementById("content");
   content.innerHTML = `
-    <h2 style="margin-bottom: 10px;">Mis Categorías</h2>
+    <h2 style="margin-bottom: 15px;">Mis Categorías</h2>
 
-    <div style="margin-bottom: 10px;">
-      <input type="text" id="nuevaCategoria" placeholder="Nueva categoría" style="padding: 5px; width: 200px;">
+    <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 15px;">
+      <input type="text" id="nuevaCategoria" placeholder="Nueva categoría" style="flex: 1; min-width: 200px; padding: 6px;">
       <button onclick="agregarCategoria()" class="boton-lateral">Agregar</button>
       <button onclick="eliminarSeleccionadas()" class="boton-lateral" style="background-color: #e74c3c;">Eliminar Seleccionadas</button>
       <button onclick="eliminarTodasCategorias()" class="boton-lateral" style="background-color: #c0392b;">Eliminar Todas</button>
@@ -837,6 +838,7 @@ function eliminarTodasCategorias() {
   localStorage.removeItem(`categorias_${usuario}`);
   mostrarCategorias();
 }
+</script>
 
 
 
