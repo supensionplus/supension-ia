@@ -750,9 +750,62 @@ function eliminarFavoritosSeleccionados() {
   }
 
   function mostrarCategorias() {
-    document.getElementById('misPromptsVista').innerHTML = `<h3>Categorías</h3><p>(Próximamente...)</p>`;
-  }
+  const usuario = localStorage.getItem("usuarioActual") || "general";
+  const categorias = JSON.parse(localStorage.getItem(`categorias_${usuario}`)) || [];
 
+  let html = `
+    <h3>Categorías</h3>
+    <div style="margin-bottom: 10px;">
+      <input id="nuevaCategoria" type="text" placeholder="Nombre de nueva categoría" style="padding:5px; width:60%;">
+      <button class="boton-lateral" onclick="agregarCategoria()">Agregar</button>
+    </div>
+    <ul id="listaCategorias" style="list-style: none; padding: 0;">
+  `;
+
+  categorias.forEach((cat, index) => {
+    html += `
+      <li style="margin-bottom: 5px;">
+        <input type="text" value="${cat}" onchange="editarCategoria(${index}, this.value)" style="padding:5px; width:60%;">
+        <button class="boton-lateral" onclick="eliminarCategoria(${index})">Eliminar</button>
+      </li>`;
+  });
+
+  html += `</ul>`;
+  document.getElementById("misPromptsVista").innerHTML = html;
+}
+
+
+
+function agregarCategoria() {
+  const usuario = localStorage.getItem("usuarioActual") || "general";
+  const input = document.getElementById("nuevaCategoria");
+  const nueva = input.value.trim();
+  if (!nueva) return;
+
+  let categorias = JSON.parse(localStorage.getItem(`categorias_${usuario}`)) || [];
+  categorias.push(nueva);
+  localStorage.setItem(`categorias_${usuario}`, JSON.stringify(categorias));
+  mostrarCategorias();
+}
+
+function editarCategoria(index, nuevoValor) {
+  const usuario = localStorage.getItem("usuarioActual") || "general";
+  let categorias = JSON.parse(localStorage.getItem(`categorias_${usuario}`)) || [];
+  categorias[index] = nuevoValor.trim();
+  localStorage.setItem(`categorias_${usuario}`, JSON.stringify(categorias));
+}
+
+function eliminarCategoria(index) {
+  const usuario = localStorage.getItem("usuarioActual") || "general";
+  let categorias = JSON.parse(localStorage.getItem(`categorias_${usuario}`)) || [];
+  categorias.splice(index, 1);
+  localStorage.setItem(`categorias_${usuario}`, JSON.stringify(categorias));
+  mostrarCategorias();
+}
+
+
+  
+    
   function mostrarSubcategorias() {
     document.getElementById('misPromptsVista').innerHTML = `<h3>Subcategorías</h3><p>(Próximamente...)</p>`;
   }
