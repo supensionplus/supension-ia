@@ -749,50 +749,77 @@ function eliminarFavoritosSeleccionados() {
     `;
   }
 
-  function mostrarCategorias() {
+  
+function mostrarCategorias() {
+  const content = document.getElementById("content");
+  content.innerHTML = `
+    <h2 style="margin-bottom: 10px;">Mis Categorías</h2>
+
+    <div style="margin-bottom: 10px;">
+      <input type="text" id="nuevaCategoria" placeholder="Nueva categoría" style="padding: 5px; width: 200px;">
+      <button onclick="agregarCategoria()" class="boton-lateral">Agregar</button>
+      <button onclick="eliminarSeleccionadas()" class="boton-lateral" style="background-color: #e74c3c;">Eliminar Seleccionadas</button>
+      <button onclick="eliminarTodasCategorias()" class="boton-lateral" style="background-color: #c0392b;">Eliminar Todas</button>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="background-color: #f0f0f0;">
+          <th style="padding: 8px; border: 1px solid #ccc;">Seleccionar</th>
+          <th style="padding: 8px; border: 1px solid #ccc;">Nombre de Categoría</th>
+          <th style="padding: 8px; border: 1px solid #ccc;">Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tablaCategorias"></tbody>
+    </table>
+  `;
+
   const usuario = localStorage.getItem("usuarioActual") || "general";
   const categorias = JSON.parse(localStorage.getItem(`categorias_${usuario}`)) || [];
 
-  let html = `
-    <h3>Categorías</h3>
-    <div style="margin-bottom: 10px;">
-      <input id="nuevaCategoria" type="text" placeholder="Nombre de nueva categoría" style="padding:5px; width:60%;">
-      <button class="boton-lateral" onclick="agregarCategoria()">Agregar</button>
-    </div>
-    <ul id="listaCategorias" style="list-style: none; padding: 0;">
-  `;
+  const tabla = document.getElementById("tablaCategorias");
+  tabla.innerHTML = "";
 
   categorias.forEach((cat, index) => {
-    html += `
-      <li style="margin-bottom: 5px;">
-        <input type="text" value="${cat}" onchange="editarCategoria(${index}, this.value)" style="padding:5px; width:60%;">
+    const fila = document.createElement("tr");
+    fila.innerHTML = `
+      <td style="padding: 8px; border: 1px solid #ccc; text-align: center;">
+        <input type="checkbox" class="checkCategoria" data-index="${index}">
+      </td>
+      <td style="padding: 8px; border: 1px solid #ccc;">
+        <input type="text" value="${cat}" onchange="editarCategoria(${index}, this.value)" style="width: 100%; padding: 4px;">
+      </td>
+      <td style="padding: 8px; border: 1px solid #ccc; text-align: center;">
         <button class="boton-lateral" onclick="eliminarCategoria(${index})">Eliminar</button>
-      </li>`;
+      </td>
+    `;
+    tabla.appendChild(fila);
   });
-
-  html += `</ul>`;
-  document.getElementById("misPromptsVista").innerHTML = html;
 }
-
-
 
 function agregarCategoria() {
   const usuario = localStorage.getItem("usuarioActual") || "general";
-  const input = document.getElementById("nuevaCategoria");
-  const nueva = input.value.trim();
+  const nueva = document.getElementById("nuevaCategoria").value.trim();
   if (!nueva) return;
 
   let categorias = JSON.parse(localStorage.getItem(`categorias_${usuario}`)) || [];
-  categorias.push(nueva);
-  localStorage.setItem(`categorias_${usuario}`, JSON.stringify(categorias));
-  mostrarCategorias();
+  if (!categorias.includes(nueva)) {
+    categorias.push(nueva);
+    localStorage.setItem(`categorias_${usuario}`, JSON.stringify(categorias));
+    mostrarCategorias();
+    document.getElementById("nuevaCategoria").value = "";
+  }
 }
 
-function editarCategoria(index, nuevoValor) {
+function editarCategoria(index, nuevoNombre) {
   const usuario = localStorage.getItem("usuarioActual") || "general";
   let categorias = JSON.parse(localStorage.getItem(`categorias_${usuario}`)) || [];
-  categorias[index] = nuevoValor.trim();
-  localStorage.setItem(`categorias_${usuario}`, JSON.stringify(categorias));
+
+  if (nuevoNombre.trim() && !categorias.includes(nuevoNombre.trim())) {
+    categorias[index] = nuevoNombre.trim();
+    localStorage.setItem(`categorias_${usuario}`, JSON.stringify(categorias));
+    mostrarCategorias();
+  }
 }
 
 function eliminarCategoria(index) {
@@ -802,6 +829,27 @@ function eliminarCategoria(index) {
   localStorage.setItem(`categorias_${usuario}`, JSON.stringify(categorias));
   mostrarCategorias();
 }
+
+function eliminarSeleccionadas() {
+  const usuario = localStorage.getItem("usuarioActual") || "general";
+  let categorias = JSON.parse(localStorage.getItem(`categorias_${usuario}`)) || [];
+
+  const checks = document.querySelectorAll(".checkCategoria:checked");
+  const indices = Array.from(checks).map(chk => parseInt(chk.dataset.index)).sort((a, b) => b - a);
+
+  indices.forEach(i => categorias.splice(i, 1));
+  localStorage.setItem(`categorias_${usuario}`, JSON.stringify(categorias));
+  mostrarCategorias();
+}
+
+function eliminarTodasCategorias() {
+  if (!confirm("¿Estás seguro de que deseas eliminar TODAS las categorías?")) return;
+  const usuario = localStorage.getItem("usuarioActual") || "general";
+  localStorage.removeItem(`categorias_${usuario}`);
+  mostrarCategorias();
+}
+
+
 
 
   
