@@ -751,23 +751,26 @@ function eliminarFavoritosSeleccionados() {
 
   
 
+
 function mostrarCategorias() {
   const content = document.getElementById("content");
   content.innerHTML = `
-    <h2 style="margin-bottom: 15px;">Mis Categorías</h2>
+    <h2 style="margin-bottom: 10px;">Mis Categorías</h2>
 
-    <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 15px;">
+    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
       <input type="text" id="nuevaCategoria" placeholder="Nueva categoría" style="flex: 1; min-width: 200px; padding: 6px;">
-      <button onclick="agregarCategoria()" class="boton-lateral">Agregar</button>
-      <button onclick="eliminarSeleccionadas()" class="boton-lateral" style="background-color: #e74c3c;">Eliminar Seleccionadas</button>
-      <button onclick="eliminarTodasCategorias()" class="boton-lateral" style="background-color: #c0392b;">Eliminar Todas</button>
+      <div style="display: flex; gap: 10px;">
+        <button onclick="agregarCategoria()" class="boton-menu">Agregar</button>
+        <button onclick="eliminarSeleccionadas()" class="boton-menu" style="background-color: #e67e22;">Eliminar Seleccionadas</button>
+        <button onclick="eliminarTodasCategorias()" class="boton-menu" style="background-color: #c0392b;">Eliminar Todas</button>
+      </div>
     </div>
 
     <table style="width: 100%; border-collapse: collapse;">
       <thead>
-        <tr style="background-color: #f0f0f0;">
-          <th style="padding: 8px; border: 1px solid #ccc;">Seleccionar</th>
-          <th style="padding: 8px; border: 1px solid #ccc;">Nombre de Categoría</th>
+        <tr style="background-color: #f4f4f4;">
+          <th style="padding: 8px; border: 1px solid #ddd; text-align: center;">✓</th>
+          <th style="padding: 8px; border: 1px solid #ddd;">Nombre de Categoría</th>
         </tr>
       </thead>
       <tbody id="tablaCategorias"></tbody>
@@ -783,10 +786,10 @@ function mostrarCategorias() {
   categorias.forEach((cat, index) => {
     const fila = document.createElement("tr");
     fila.innerHTML = `
-      <td style="padding: 8px; border: 1px solid #ccc; text-align: center;">
+      <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">
         <input type="checkbox" class="checkCategoria" data-index="${index}">
       </td>
-      <td style="padding: 8px; border: 1px solid #ccc;">
+      <td style="padding: 8px; border: 1px solid #ddd;">
         <input type="text" value="${cat}" onchange="editarCategoria(${index}, this.value)" style="width: 100%; padding: 4px;">
       </td>
     `;
@@ -837,6 +840,8 @@ function eliminarTodasCategorias() {
   localStorage.removeItem(`categorias_${usuario}`);
   mostrarCategorias();
 }
+
+
 
 
 
