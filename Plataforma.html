@@ -750,6 +750,7 @@ function eliminarFavoritosSeleccionados() {
   }
 
   
+
 function mostrarCategorias() {
   const content = document.getElementById("content");
   content.innerHTML = `
@@ -767,7 +768,6 @@ function mostrarCategorias() {
         <tr style="background-color: #f0f0f0;">
           <th style="padding: 8px; border: 1px solid #ccc;">Seleccionar</th>
           <th style="padding: 8px; border: 1px solid #ccc;">Nombre de Categoría</th>
-          <th style="padding: 8px; border: 1px solid #ccc;">Acciones</th>
         </tr>
       </thead>
       <tbody id="tablaCategorias"></tbody>
@@ -788,9 +788,6 @@ function mostrarCategorias() {
       </td>
       <td style="padding: 8px; border: 1px solid #ccc;">
         <input type="text" value="${cat}" onchange="editarCategoria(${index}, this.value)" style="width: 100%; padding: 4px;">
-      </td>
-      <td style="padding: 8px; border: 1px solid #ccc; text-align: center;">
-        <button class="boton-lateral" onclick="eliminarCategoria(${index})">Eliminar</button>
       </td>
     `;
     tabla.appendChild(fila);
@@ -822,14 +819,6 @@ function editarCategoria(index, nuevoNombre) {
   }
 }
 
-function eliminarCategoria(index) {
-  const usuario = localStorage.getItem("usuarioActual") || "general";
-  let categorias = JSON.parse(localStorage.getItem(`categorias_${usuario}`)) || [];
-  categorias.splice(index, 1);
-  localStorage.setItem(`categorias_${usuario}`, JSON.stringify(categorias));
-  mostrarCategorias();
-}
-
 function eliminarSeleccionadas() {
   const usuario = localStorage.getItem("usuarioActual") || "general";
   let categorias = JSON.parse(localStorage.getItem(`categorias_${usuario}`)) || [];
@@ -848,6 +837,7 @@ function eliminarTodasCategorias() {
   localStorage.removeItem(`categorias_${usuario}`);
   mostrarCategorias();
 }
+
 
 
 
