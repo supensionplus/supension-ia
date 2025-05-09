@@ -156,31 +156,6 @@
       `;
     }
 
-function logout() {
-  if (confirm("¿Estás seguro de que deseas cerrar sesión?")) {
-    const referencia = localStorage.getItem("referencia");
-    const usuario = localStorage.getItem("usuarioActual");
-
-    // Opcional: si quieres guardar los favoritos y otros datos por si acaso
-    const favoritos = localStorage.getItem(`favoritos_${referencia}`);
-    const prompts = localStorage.getItem(`misPrompts_${usuario}`);
-    const categorias = localStorage.getItem(`categorias_${usuario}`);
-    const subcategorias = localStorage.getItem(`subcategorias_${usuario}`);
-
-    // Elimina solo los datos de sesión, no los personalizados
-    localStorage.removeItem("referencia");
-    localStorage.removeItem("usuarioActual");
-
-    // Restaurar por si alguna lógica interna los necesita tras redirect (opcional)
-    if (favoritos) localStorage.setItem(`favoritos_${referencia}`, favoritos);
-    if (prompts) localStorage.setItem(`misPrompts_${usuario}`, prompts);
-    if (categorias) localStorage.setItem(`categorias_${usuario}`, categorias);
-    if (subcategorias) localStorage.setItem(`subcategorias_${usuario}`, subcategorias);
-
-    // Redirige al login
-    window.location.href = "index.html";
-  }
-}
 
 
 
