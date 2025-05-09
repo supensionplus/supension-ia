@@ -144,6 +144,7 @@
     // ← Guardamos referencia y estado en localStorage
     localStorage.setItem('referencia', referencia);
     localStorage.setItem('estado', estadoUsuario);
+    localStorage.setItem('usuarioActual', nombreUsuario);  // ← ESTA LÍNEA ES CLAVE
 
     setTimeout(() => {
       mostrarPlataforma();
