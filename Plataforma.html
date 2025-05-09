@@ -158,6 +158,23 @@
 
 
 
+    function logout() {
+  if (confirm("¿Estás seguro de que deseas cerrar sesión?")) {
+    // Limpiar solo los datos de sesión
+    localStorage.removeItem("referencia");
+    localStorage.removeItem("usuarioActual");
+    localStorage.removeItem("estado");
+
+    // Redirigir al login
+    window.location.href = "index.html";
+  }
+}
+
+
+
+
+
+    
 
 
     
