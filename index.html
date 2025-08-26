@@ -114,7 +114,7 @@
     return;
   }
 
-  const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSd5yoasP3pxVzZvV-XwaurTOhxNl00JtMRh0bLYnp-SEmg3L-Q1wXH9Q7u-fLZqjJaoY6wmmrD1Y4K/pub?output=csv';
+  const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSd5yoasP3pxVzZvV-XwaurTOhxNl00JtMRh0bLYnp-SEmg3L-Q1wXH9Q7u-fLZqjJaoY6wmmrD1Y4K/pub?gid=0&single=true&output=csv';
   const response = await fetch(url);
   const data = await response.text();
   const rows = data.split('\n').slice(1);
@@ -186,3 +186,4 @@
   </script>
 </body>
 </html>
+
