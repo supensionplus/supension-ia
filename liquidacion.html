@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+
+<title>Servicios Pensionales | Supension Plus</title>
+
+<style>
+
+body{
+font-family: Arial, Helvetica, sans-serif;
+background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+margin:0;
+}
+
+.form-box{
+background:white;
+padding:40px;
+width:420px;
+border-radius:12px;
+box-shadow:0 10px 30px rgba(0,0,0,0.3);
+}
+
+h1{
+text-align:center;
+font-size:22px;
+margin-bottom:30px;
+color:#2c5364;
+}
+
+label{
+font-weight:bold;
+display:block;
+margin-top:15px;
+}
+
+input, select{
+width:100%;
+padding:10px;
+margin-top:6px;
+border-radius:6px;
+border:1px solid #ccc;
+font-size:14px;
+}
+
+input:focus, select:focus{
+outline:none;
+border-color:#2c5364;
+}
+
+button{
+margin-top:25px;
+width:100%;
+padding:12px;
+border:none;
+border-radius:8px;
+background:#2c5364;
+color:white;
+font-size:16px;
+cursor:pointer;
+transition:0.3s;
+}
+
+button:hover{
+background:#1b3947;
+}
+
+.footer{
+margin-top:20px;
+text-align:center;
+font-size:12px;
+color:#777;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="form-box">
+
+<h1>SERVICIOS PENSIONALES<br>SUPENSION PLUS</h1>
+
+<label>Nombre del Solicitante</label>
+<input type="text" id="solicitante" placeholder="Ej: Oscar">
+
+<label>Nombre del Cliente</label>
+<input type="text" id="cliente" placeholder="Ej: Jorge">
+
+<label>Tipo de Servicio</label>
+<select id="servicio">
+<option value="">Seleccione...</option>
+<option value="Proyección">Proyección</option>
+<option value="Reliquidación">Reliquidación</option>
+<option value="Otro">Otro</option>
+</select>
+
+<button onclick="enviarCorreo()">Enviar Solicitud</button>
+
+<div class="footer">
+Supension Plus © 2026
+</div>
+
+</div>
+
+<script>
+
+function enviarCorreo(){
+
+var solicitante = document.getElementById("solicitante").value.trim();
+var cliente = document.getElementById("cliente").value.trim();
+var servicio = document.getElementById("servicio").value;
+
+if(solicitante=="" || cliente=="" || servicio==""){
+alert("Por favor complete todos los campos");
+return;
+}
+
+solicitante = solicitante.toUpperCase();
+
+var asunto = servicio + " - " + solicitante + " - Cliente " + cliente;
+
+var url = "https://mail.google.com/mail/?view=cm&fs=1&to=supensionplus@gmail.com&su=" + encodeURIComponent(asunto);
+
+window.location.href = url;
+
+}
+
+</script>
+
+</body>
+</html>
